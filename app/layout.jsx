@@ -1,6 +1,7 @@
 import './globals.css';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import ToasterProvider from '../components/ToasterProvider';
 
 export const metadata = {
   title: 'Sahayota | Accident & Emergency Response',
@@ -14,6 +15,7 @@ export default function RootLayout({ children }) {
         <Navbar />
         {children}
         <Footer />
+        <ToasterProvider />
       </body>
     </html>
   );
