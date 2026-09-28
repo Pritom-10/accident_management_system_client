@@ -6,12 +6,10 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-6 py-16">
         <div className="grid gap-10 rounded-2xl border border-white/50 bg-white/40 p-8 backdrop-blur-xl md:grid-cols-[1fr_1fr]">
           <div>
-            <h2 className="text-2xl font-semibold text-slate-900">
-              Get notified for your district
-            </h2>
-            <p className="mt-2 max-w-sm text-sm leading-relaxed text-slate-500">
-              Leave your email and district — we&rsquo;ll send you a message the
-              moment a new accident is reported nearby.
+            <h2 className="text-2xl font-semibold text-slate-900">Get notified for your district</h2>
+            <p className="mt-2 max-w-sm text-sm leading-relaxed text-slate-600">
+              Leave your email and district — we&rsquo;ll send you a message the moment a new
+              accident is reported nearby.
             </p>
           </div>
 
@@ -32,15 +30,9 @@ export default function Footer() {
           </form>
         </div>
 
-        <div className="mt-10 flex flex-col justify-between gap-4 text-xs text-slate-500 sm:flex-row">
-          <p>ResQ — accident &amp; emergency response, Bangladesh.</p>
-          <p>
-            In an active emergency, call{" "}
-            <a href="tel:999" className="text-slate-900 hover:underline">
-              999
-            </a>{" "}
-            first.
-          </p>
+        <div className="mt-10 flex flex-col justify-between gap-4 text-xs text-slate-600 sm:flex-row">
+          <p>Sahayota — accident &amp; emergency response, Bangladesh.</p>
+          <p>In an active emergency, call <a href="tel:999" className="text-slate-900 hover:underline">999</a> first.</p>
         </div>
       </div>
     </footer>
