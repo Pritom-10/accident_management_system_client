@@ -6,7 +6,7 @@ import { ImagePlus, Loader2, X, RefreshCw } from 'lucide-react';
 
 const API_BASE = 'http://localhost:5000/api';
 
-// Shrinks big phone photos (max 1200px, JPEG) so the database stays small
+
 async function resizeImage(file, maxSize = 1200, quality = 0.8) {
   const bitmap = await createImageBitmap(file);
   const scale = Math.min(1, maxSize / Math.max(bitmap.width, bitmap.height));
@@ -23,15 +23,14 @@ export default function ImageUpload({ value, onChange, label = 'Photo (optional)
   const inputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [dragging, setDragging] = useState(false);
-  const [localPreview, setLocalPreview] = useState(null); // instant preview from the chosen file
+  const [localPreview, setLocalPreview] = useState(null); 
 
-  // If the form is reset (value becomes empty), clear the preview too
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!value) setLocalPreview(null);
   }, [value]);
 
-  // Free the temporary preview URL when it changes / on unmount
+3-
   useEffect(() => {
     return () => {
       if (localPreview) URL.revokeObjectURL(localPreview);
@@ -45,19 +44,19 @@ export default function ImageUpload({ value, onChange, label = 'Photo (optional)
       return;
     }
 
-    setLocalPreview(URL.createObjectURL(file)); // show the picture immediately
+    setLocalPreview(URL.createObjectURL(file)); 
     setUploading(true);
 
     try {
       const blob = await resizeImage(file);
       const formData = new FormData();
-      formData.append('image', blob, 'photo.jpg'); // field name "image" must match the backend
+      formData.append('image', blob, 'photo.jpg'); 
 
       const res = await fetch(`${API_BASE}/upload`, { method: 'POST', body: formData });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Upload failed');
 
-      onChange(data.url); // saved later as photoUrl in the document
+      onChange(data.url); 
       toast.success('Photo uploaded');
     } catch (err) {
       setLocalPreview(null);

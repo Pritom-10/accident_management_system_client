@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 
-// Fades + slides content up when it scrolls into view. Wrap anything with it.
 export default function Reveal({ children, delay = 0, className = '' }) {
   return (
     <motion.div

@@ -1,5 +1,4 @@
-// Sahayota logo: a location pin (the place of the emergency) with a plus (help)
-// and ripple rings underneath (response spreading out from that spot).
+
 export default function Logo({ size = 34, showText = true, className = '' }) {
   return (
     <span className={`inline-flex items-center gap-2.5 ${className}`}>

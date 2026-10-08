@@ -42,21 +42,15 @@ export default async function HomePage() {
     getMissingPersons(),
   ]);
 
-  const districts = new Set([
-    ...accidents.map((a) => a.location?.district).filter(Boolean),
-    ...hospitals.map((h) => h.district).filter(Boolean),
-  ]);
-
   const stats = {
     casesUnderResponse: accidents.filter((a) => a.status === 'rescue_in_progress').length,
-    districtsCovered: districts.size,
-    availableVolunteers: null,
+    casesSolved: accidents.filter((a) => a.status === 'cleared').length,
+    availableVolunteers: null, // volunteer route বানানোর পর এখানে আসল সংখ্যা বসবে
   };
 
   return (
     <main>
       <Hero stats={stats} />
-     
       <AccidentGrid accidents={accidents.slice(0, 4)} />
       <HospitalDirectory hospitals={hospitals.slice(0, 4)} />
       <MissingPersons people={missing.slice(0, 3)} />
