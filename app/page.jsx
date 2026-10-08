@@ -56,7 +56,7 @@ export default async function HomePage() {
   return (
     <main>
       <Hero stats={stats} />
-      {/* homepage only shows a short preview of each — full lists live on their own pages */}
+     
       <AccidentGrid accidents={accidents.slice(0, 4)} />
       <HospitalDirectory hospitals={hospitals.slice(0, 4)} />
       <MissingPersons people={missing.slice(0, 3)} />
