@@ -1,5 +1,7 @@
+/* eslint-disable react-hooks/static-components */
 import Link from 'next/link';
 import { Car, Flame, Waves, AlertTriangle, MapPin, Clock } from 'lucide-react';
+import { imageSrc } from '../lib/imageUrl';
 
 const statusMap = {
   rescue_in_progress: { label: 'Rescue in progress', color: 'text-rose-600', dot: 'bg-rose-600', border: '#E11D48' },
@@ -30,7 +32,7 @@ export default function AccidentCard({ accident }) {
       {accident.photoUrl && (
         <div className="-mx-5 -mt-5 h-36 w-[calc(100%+2.5rem)] overflow-hidden">
           <img
-            src={accident.photoUrl}
+            src={imageSrc(accident.photoUrl)}
             alt={accident.accidentType}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />

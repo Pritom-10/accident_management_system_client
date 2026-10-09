@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { ImagePlus, Loader2, X, RefreshCw } from 'lucide-react';
+import { imageSrc } from '../lib/imageUrl';
 
 const API_BASE = 'http://localhost:5000/api';
 
@@ -111,9 +112,9 @@ export default function ImageUpload({ value, onChange, label = 'Photo (optional)
       >
         {preview ? (
           <>
-            <img src={preview} alt="Selected photo" className="h-full w-full object-cover" />
+        <img src={imageSrc(preview)} alt="Selected photo" className="h-full w-full object-cover" />
 
-            {/* hover overlay: change photo */}
+           
             {!uploading && (
               <div className="absolute inset-0 flex items-center justify-center gap-2 bg-slate-900/45 text-sm font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
                 <RefreshCw size={16} /> Change photo

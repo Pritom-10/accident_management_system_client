@@ -1,4 +1,5 @@
 import { UserSearch, Building2, CalendarDays, UserRound } from 'lucide-react';
+import { imageSrc } from '../../lib/imageUrl';
 
 const API_BASE = 'http://localhost:5000/api';
 
@@ -38,7 +39,7 @@ export default async function UnidentifiedPatientsPage() {
             <div key={p._id} className="rounded-2xl border border-white/50 bg-white/50 p-5 shadow-md shadow-slate-900/5 backdrop-blur-xl">
               <div className="mb-4 aspect-[4/3] w-full overflow-hidden rounded-xl border border-slate-200/70 bg-slate-100">
                 {p.photoUrl ? (
-                  <img src={p.photoUrl} alt="Patient" className="h-full w-full object-cover" />
+                 <img src={imageSrc(p.photoUrl)} alt="Patient" className="h-full w-full object-cover" />
                 ) : (
                   <div className="flex h-full items-center justify-center text-slate-400"><UserRound size={40} /></div>
                 )}

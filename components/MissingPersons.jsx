@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight, MapPin, CalendarDays, UserRound } from 'lucide-react';
 import Reveal from './Reveal';
+import { imageSrc } from '../lib/imageUrl';
 
 export default function MissingPersons({ people = [], showViewAll = true }) {
   return (
@@ -28,7 +29,7 @@ export default function MissingPersons({ people = [], showViewAll = true }) {
               <div className="group h-full rounded-2xl border border-white/50 bg-white/50 p-5 shadow-md shadow-slate-900/5 backdrop-blur-xl transition-all hover:-translate-y-1 hover:shadow-xl">
                 <div className="mb-4 aspect-[4/3] w-full overflow-hidden rounded-xl border border-slate-200/70 bg-slate-100">
                   {p.photoUrl ? (
-                    <img src={p.photoUrl} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <img src={imageSrc(p.photoUrl)} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                   ) : (
                     <div className="flex h-full items-center justify-center text-slate-400"><UserRound size={40} /></div>
                   )}
