@@ -45,7 +45,7 @@ export default async function HomePage() {
   const stats = {
     casesUnderResponse: accidents.filter((a) => a.status === 'rescue_in_progress').length,
     casesSolved: accidents.filter((a) => a.status === 'cleared').length,
-    availableVolunteers: null, // volunteer route বানানোর পর এখানে আসল সংখ্যা বসবে
+    availableVolunteers: null,
   };
 
   return (
