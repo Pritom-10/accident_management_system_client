@@ -1,6 +1,5 @@
-/* eslint-disable react-hooks/static-components */
 import Link from 'next/link';
-import { Car, Flame, Waves, AlertTriangle, MapPin, Clock } from 'lucide-react';
+import { MapPin, Clock } from 'lucide-react';
 import { imageSrc } from '../lib/imageUrl';
 
 const statusMap = {
@@ -8,17 +7,8 @@ const statusMap = {
   cleared: { label: 'Cleared', color: 'text-emerald-600', dot: 'bg-emerald-600', border: '#059669' },
 };
 
-function typeIcon(type = '') {
-  const t = type.toLowerCase();
-  if (t.includes('road') || t.includes('car') || t.includes('vehicle')) return Car;
-  if (t.includes('fire')) return Flame;
-  if (t.includes('drown') || t.includes('water')) return Waves;
-  return AlertTriangle;
-}
-
 export default function AccidentCard({ accident }) {
   const status = statusMap[accident.status] ?? statusMap.cleared;
-  const Icon = typeIcon(accident.accidentType);
   const time = accident.dateTime
     ? new Date(accident.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     : '';
@@ -39,16 +29,9 @@ export default function AccidentCard({ accident }) {
         </div>
       )}
 
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/80 text-slate-700">
-            <Icon size={18} />
-          </span>
-          <div>
-            <h3 className="text-base font-semibold leading-tight text-slate-900">{accident.accidentType}</h3>
-            <p className="mono text-[11px] text-slate-600">{accident.caseId}</p>
-          </div>
-        </div>
+      <div>
+        <h3 className="text-base font-semibold leading-tight text-slate-900">{accident.accidentType}</h3>
+        <p className="mono mt-1 text-[11px] text-slate-600">{accident.caseId}</p>
       </div>
 
       <span className={`flex w-fit items-center gap-1.5 rounded-full bg-white/70 px-2.5 py-1 text-xs font-medium ${status.color}`}>

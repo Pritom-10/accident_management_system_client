@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, MapPin, CalendarDays, UserRound } from 'lucide-react';
+import { ArrowRight, MapPin, CalendarDays, UserRound, Cake } from 'lucide-react';
 import Reveal from './Reveal';
 import { imageSrc } from '../lib/imageUrl';
 
@@ -26,7 +26,7 @@ export default function MissingPersons({ people = [], showViewAll = true }) {
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {people.map((p, i) => (
             <Reveal key={p._id} delay={i * 0.08} className="h-full">
-              <div className="group h-full rounded-2xl border border-white/50 bg-white/50 p-5 shadow-md shadow-slate-900/5 backdrop-blur-xl transition-all hover:-translate-y-1 hover:shadow-xl">
+              <div className="group h-full rounded-2xl border border-white/50 bg-white/50 p-3 shadow-md shadow-slate-900/5 backdrop-blur-xl transition-all hover:-translate-y-1 hover:shadow-xl">
                 <div className="mb-4 aspect-[4/3] w-full overflow-hidden rounded-xl border border-slate-200/70 bg-slate-100">
                   {p.photoUrl ? (
                     <img src={imageSrc(p.photoUrl)} alt={p.name} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
@@ -34,10 +34,11 @@ export default function MissingPersons({ people = [], showViewAll = true }) {
                     <div className="flex h-full items-center justify-center text-slate-400"><UserRound size={40} /></div>
                   )}
                 </div>
-                <p className="text-base font-semibold text-slate-900">{p.name}, {p.age}</p>
+                <p className="text-base font-semibold text-slate-900">{p.name}</p>
                 <p className="mt-2 flex items-center gap-1.5 text-xs text-slate-600">
                   <MapPin size={13} /> Last seen: {p.lastKnownLocation?.area}, {p.lastKnownLocation?.district}
                 </p>
+                 <p className="mt-2 flex items-center gap-1.5 text-xs text-slate-600"><Cake size={13} /> Age: {p.age}</p>
                 <p className="mono mt-1 flex items-center gap-1.5 text-xs text-slate-600">
                   <CalendarDays size={13} />
                   {p.lastSeenDateTime ? new Date(p.lastSeenDateTime).toLocaleDateString() : ''}
