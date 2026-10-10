@@ -4,7 +4,7 @@ import Footer from '../components/Footer';
 import ToasterProvider from '../components/ToasterProvider';
 
 export const metadata = {
-  title: 'Sahayota | Accident & Emergency Response',
+  title: 'ResQ',
   description: 'Real-time accident, missing person and emergency information for Bangladesh.',
 };
 

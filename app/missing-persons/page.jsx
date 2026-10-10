@@ -12,7 +12,7 @@ async function getMissingPersons() {
   }
 }
 
-export const metadata = { title: 'Missing persons | Sahayota' };
+export const metadata = { title: 'Missing persons | ResQ' };
 
 export default async function MissingPersonsPage() {
   const missing = await getMissingPersons();

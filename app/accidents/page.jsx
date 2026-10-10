@@ -12,7 +12,7 @@ async function getAccidents() {
   }
 }
 
-export const metadata = { title: 'Verified accidents | Sahayota' };
+export const metadata = { title: 'Verified accidents | ResQ' };
 
 export default async function AccidentsPage() {
   const accidents = await getAccidents();

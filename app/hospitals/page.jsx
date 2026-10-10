@@ -12,7 +12,7 @@ async function getHospitals() {
   }
 }
 
-export const metadata = { title: 'Hospitals & emergency contacts | Sahayota' };
+export const metadata = { title: 'Hospitals & emergency contacts | ResQ' };
 
 export default async function HospitalsPage() {
   const hospitals = await getHospitals();

@@ -40,8 +40,8 @@ export default function SubscribeBox() {
           <Bell size={18} />
         </span>
         <div>
-          <p className="text-sm font-semibold text-slate-900">Get notified for your district</p>
-          <p className="text-xs text-slate-600">We&rsquo;ll email you the moment a new accident is reported nearby.</p>
+          <p className="text-sm font-semibold text-slate-900">Want to Help? Join as a Donor</p>
+          <p className="text-xs text-slate-600">Leave your WhatsApp number and we&rsquo;ll reach out whenever someone nearby needs blood, funds, or emergency support.</p>
         </div>
       </div>
 

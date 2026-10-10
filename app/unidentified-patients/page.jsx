@@ -13,7 +13,7 @@ async function getPatients() {
   }
 }
 
-export const metadata = { title: 'Unidentified patients | Sahayota' };
+export const metadata = { title: 'Unidentified patients | ResQ' };
 
 export default async function UnidentifiedPatientsPage() {
   const patients = await getPatients();
