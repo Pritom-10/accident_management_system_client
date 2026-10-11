@@ -1,6 +1,6 @@
 import HospitalDirectory from '../../components/HospitalDirectory';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = (process.env.NEXT_PUBLIC_API_ORIGIN || 'http://localhost:5000') + '/api';
 
 async function getHospitals() {
   try {
