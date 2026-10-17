@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Loader2, Send, LogOut } from 'lucide-react';
+import { apiFetch } from '../../lib/api';
 
 const API_BASE = (process.env.NEXT_PUBLIC_API_ORIGIN || 'http://localhost:5000') + '/api';
 const field = 'w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2.5 text-sm text-slate-700';
@@ -17,8 +18,8 @@ export default function PatientCountPanel() {
   const load = useCallback(async () => {
     try {
       const [h, a] = await Promise.all([
-        fetch(`${API_BASE}/hospitals`).then((r) => r.json()),
-        fetch(`${API_BASE}/hospital-admissions`).then((r) => r.json()),
+        	apiFetch(`${API_BASE}/hospitals`).then((r) => r.json()),
+        	apiFetch(`${API_BASE}/hospital-admissions`).then((r) => r.json()),
       ]);
       setHospitals(h.filter((x) => x.type === 'hospital'));
       setAdmissions(a);
@@ -38,7 +39,7 @@ export default function PatientCountPanel() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/hospital-admissions`, {
+      const res = await 	apiFetch(`${API_BASE}/hospital-admissions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, patientCount: Number(form.patientCount) }),
@@ -56,7 +57,7 @@ export default function PatientCountPanel() {
 
   async function discharge(id) {
     try {
-      const res = await fetch(`${API_BASE}/hospital-admissions/${id}/discharge`, { method: 'PATCH' });
+      const res = await 	apiFetch(`${API_BASE}/hospital-admissions/${id}/discharge`, { method: 'PATCH' });
       if (!res.ok) throw new Error();
       toast.success('Marked as discharged');
       load();

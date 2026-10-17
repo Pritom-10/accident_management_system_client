@@ -14,7 +14,6 @@ export default function Footer() {
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <Link href="/accidents" className="hover:text-slate-900">Accidents</Link>
           <Link href="/hospitals" className="hover:text-slate-900">Hospitals</Link>
-          <Link href="/missing-persons" className="hover:text-slate-900">Missing persons</Link>
           <a href="tel:999" className="flex items-center gap-1.5 font-medium text-rose-600 hover:underline">
             <Phone size={14} /> Emergency: 999
           </a>

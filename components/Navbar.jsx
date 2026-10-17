@@ -2,13 +2,15 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import {
-  Menu, X, LogIn, HeartHandshake, ChevronDown,
-  Building2, UserSearch,
+  Menu, X, LogIn, LogOut, UserPlus, ChevronDown,
+  Building2, UserSearch, LayoutDashboard,
 } from 'lucide-react';
 import Logo from './Logo';
+import { useAuth } from './AuthProvider';
 
 const hospitalMenu = [
   { label: 'Hospital directory', desc: 'Contacts and admitted patient counts', href: '/hospitals', icon: Building2 },
@@ -17,18 +19,23 @@ const hospitalMenu = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false); 
-  const [dropdown, setDropdown] = useState(false); 
+  const router = useRouter();
+  const { user, loading, logout } = useAuth();
+  const [open, setOpen] = useState(false); // mobile menu
+  const [dropdown, setDropdown] = useState(false); // desktop dropdown
   const dropdownRef = useRef(null);
 
-  
+  const canVolunteer = user && (user.roles.includes('volunteer') || user.roles.includes('admin'));
+  const firstName = user ? user.name.split(' ')[0] : '';
+
+
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setOpen(false);
     setDropdown(false);
   }, [pathname]);
 
-  
+
   useEffect(() => {
     function onClick(e) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setDropdown(false);
@@ -45,14 +52,21 @@ export default function Navbar() {
       active ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-white/70 hover:text-slate-900'
     }`;
 
+  function handleLogout() {
+    logout();
+    setOpen(false);
+    toast.success('Logged out');
+    router.push('/');
+  }
+
   return (
     <header className="sticky top-0 z-30 border-b border-white/40 bg-white/50 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3">
-        <Link href="/" aria-label="ResQ home">
+        <Link href="/" aria-label="Sahayota home">
           <Logo />
         </Link>
 
-        
+    
         <nav className="hidden items-center gap-1 lg:flex">
           <Link href="/" className={pill(isActive('/'))}>Home</Link>
           <Link href="/accidents" className={pill(isActive('/accidents'))}>Accidents</Link>
@@ -96,23 +110,46 @@ export default function Navbar() {
               )}
             </AnimatePresence>
           </div>
-
-          <Link href="/missing-persons" className={pill(isActive('/missing-persons'))}>Missing persons</Link>
         </nav>
 
+        
         <div className="hidden items-center gap-3 lg:flex">
-          <Link
-            href="/login"
-            className="flex items-center gap-2 rounded-full border border-slate-300/70 bg-white/60 px-4 py-2 text-sm font-medium text-slate-700 backdrop-blur hover:bg-white/90"
-          >
-            <LogIn size={16} /> Login
-          </Link>
-          <Link
-            href="/volunteer/register"
-            className="flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-md shadow-indigo-600/20 hover:bg-indigo-700"
-          >
-            <HeartHandshake size={16} /> Sign up as Volunteer
-          </Link>
+          {loading ? (
+            <div className="h-9 w-44" />
+          ) : user ? (
+            <>
+              {canVolunteer && (
+                <Link
+                  href="/volunteer/dashboard"
+                  className="flex items-center gap-2 rounded-full border border-slate-300/70 bg-white/60 px-4 py-2 text-sm font-medium text-slate-700 backdrop-blur hover:bg-white/90"
+                >
+                  <LayoutDashboard size={16} /> Dashboard
+                </Link>
+              )}
+              <span className="text-sm text-slate-700">Hi, {firstName}</span>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+              >
+                <LogOut size={16} /> Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="flex items-center gap-2 rounded-full border border-slate-300/70 bg-white/60 px-4 py-2 text-sm font-medium text-slate-700 backdrop-blur hover:bg-white/90"
+              >
+                <LogIn size={16} /> Login
+              </Link>
+              <Link
+                href="/register"
+                className="flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-md shadow-indigo-600/20 hover:bg-indigo-700"
+              >
+                <UserPlus size={16} /> Register
+              </Link>
+            </>
+          )}
         </div>
 
         <button
@@ -124,7 +161,7 @@ export default function Navbar() {
         </button>
       </div>
 
-    
+      
       <AnimatePresence>
         {open && (
           <motion.div
@@ -150,14 +187,30 @@ export default function Navbar() {
                 </Link>
               ))}
 
-              <Link href="/missing-persons" className={`mt-2 rounded-xl px-4 py-3 text-sm ${isActive('/missing-persons') ? 'bg-slate-900 text-white' : 'text-slate-700 hover:bg-white/70'}`}>Missing persons</Link>
-
-              <Link href="/login" className="mt-2 rounded-xl border border-slate-300/70 bg-white/60 px-4 py-3 text-center text-sm font-medium text-slate-700">
-                Login
-              </Link>
-              <Link href="/volunteer/register" className="rounded-xl bg-indigo-600 px-4 py-3 text-center text-sm font-medium text-white">
-                Sign up as Volunteer
-              </Link>
+              {!loading && user ? (
+                <>
+                  {canVolunteer && (
+                    <Link href="/volunteer/dashboard" className="mt-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-slate-700 hover:bg-white/70">
+                      <LayoutDashboard size={16} /> Dashboard
+                    </Link>
+                  )}
+                  <p className="px-4 pt-2 text-sm text-slate-600">Logged in as {user.name}</p>
+                  <button onClick={handleLogout} className="rounded-xl bg-slate-900 px-4 py-3 text-center text-sm font-medium text-white">
+                    Logout
+                  </button>
+                </>
+              ) : (
+                !loading && (
+                  <>
+                    <Link href="/login" className="mt-2 rounded-xl border border-slate-300/70 bg-white/60 px-4 py-3 text-center text-sm font-medium text-slate-700">
+                      Login
+                    </Link>
+                    <Link href="/register" className="rounded-xl bg-indigo-600 px-4 py-3 text-center text-sm font-medium text-white">
+                      Register
+                    </Link>
+                  </>
+                )
+              )}
             </div>
           </motion.div>
         )}

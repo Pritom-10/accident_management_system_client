@@ -1,33 +1,11 @@
 import Hero from '../components/Hero';
 import AccidentGrid from '../components/AccidentGrid';
 import HospitalDirectory from '../components/HospitalDirectory';
-import MissingPersons from '../components/MissingPersons';
+import { API_BASE } from '../lib/api';
 
-const API_BASE = (process.env.NEXT_PUBLIC_API_ORIGIN || 'http://localhost:5000') + '/api';
-
-async function getAccidents() {
+async function getJson(path) {
   try {
-    const res = await fetch(`${API_BASE}/accidents`, { cache: 'no-store' });
-    if (!res.ok) return [];
-    return res.json();
-  } catch {
-    return [];
-  }
-}
-
-async function getHospitals() {
-  try {
-    const res = await fetch(`${API_BASE}/hospitals`, { cache: 'no-store' });
-    if (!res.ok) return [];
-    return res.json();
-  } catch {
-    return [];
-  }
-}
-
-async function getMissingPersons() {
-  try {
-    const res = await fetch(`${API_BASE}/missing-persons`, { cache: 'no-store' });
+    const res = await fetch(`${API_BASE}${path}`, { cache: 'no-store' });
     if (!res.ok) return [];
     return res.json();
   } catch {
@@ -36,10 +14,9 @@ async function getMissingPersons() {
 }
 
 export default async function HomePage() {
-  const [accidents, hospitals, missing] = await Promise.all([
-    getAccidents(),
-    getHospitals(),
-    getMissingPersons(),
+  const [accidents, hospitals] = await Promise.all([
+    getJson('/accidents'),
+    getJson('/hospitals'),
   ]);
 
   const stats = {
@@ -53,7 +30,6 @@ export default async function HomePage() {
       <Hero stats={stats} />
       <AccidentGrid accidents={accidents.slice(0, 4)} />
       <HospitalDirectory hospitals={hospitals.slice(0, 4)} />
-      <MissingPersons people={missing.slice(0, 3)} />
     </main>
   );
 }

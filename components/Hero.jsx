@@ -49,10 +49,10 @@ export default function Hero({ stats }) {
               <Siren size={18} /> Report an emergency
             </Link>
             <Link
-              href="/missing-persons"
+              href="/hospitals"
               className="flex items-center gap-2 rounded-full border border-slate-300/70 bg-white/60 px-5 py-3 text-sm font-medium text-slate-700 backdrop-blur hover:bg-white/90"
             >
-              <Search size={18} /> Search missing persons
+              <Search size={18} /> Find hospitals
             </Link>
           </motion.div>
 

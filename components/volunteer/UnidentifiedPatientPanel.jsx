@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Loader2, Send, Info } from 'lucide-react';
 import ImageUpload from '../ImageUpload';
+import { apiFetch } from '../../lib/api';
 
 const API_BASE = (process.env.NEXT_PUBLIC_API_ORIGIN || 'http://localhost:5000') + '/api';
 const field = 'w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2.5 text-sm text-slate-700';
@@ -23,7 +24,7 @@ export default function UnidentifiedPatientPanel() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch(`${API_BASE}/hospitals`)
+    	apiFetch(`${API_BASE}/hospitals`)
       .then((r) => r.json())
       .then((h) => setHospitals(h.filter((x) => x.type === 'hospital')))
       .catch(() => toast.error('Could not load hospitals. Is the backend running?'));
@@ -44,7 +45,7 @@ export default function UnidentifiedPatientPanel() {
     };
 
     try {
-      const res = await fetch(`${API_BASE}/unidentified-patients`, {
+      const res = await 	apiFetch(`${API_BASE}/unidentified-patients`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
