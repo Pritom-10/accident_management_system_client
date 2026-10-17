@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import {
   Menu, X, LogIn, LogOut, UserPlus, ChevronDown,
-  Building2, UserSearch, LayoutDashboard,
+  Building2, UserSearch, LayoutDashboard, UserRound,
 } from 'lucide-react';
 import Logo from './Logo';
 import { useAuth } from './AuthProvider';
@@ -126,7 +126,7 @@ export default function Navbar() {
                   <LayoutDashboard size={16} /> Dashboard
                 </Link>
               )}
-              <span className="text-sm text-slate-700">Hi, {firstName}</span>
+              <Link href="/profile"className="flex items-center gap-2 rounded-full px-3 py-2 text-sm text-slate-700 hover:bg-white/70"><UserRound size={16} /> {firstName}</Link>
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
@@ -194,7 +194,9 @@ export default function Navbar() {
                       <LayoutDashboard size={16} /> Dashboard
                     </Link>
                   )}
-                  <p className="px-4 pt-2 text-sm text-slate-600">Logged in as {user.name}</p>
+                  <Link href="/profile" className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-slate-700 hover:bg-white/70">
+  <UserRound size={16} /> My profile ({user.name})
+</Link>
                   <button onClick={handleLogout} className="rounded-xl bg-slate-900 px-4 py-3 text-center text-sm font-medium text-white">
                     Logout
                   </button>

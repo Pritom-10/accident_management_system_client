@@ -70,6 +70,12 @@ export default function LoginPage() {
           />
         </div>
 
+         <div className="-mt-2 text-right">
+          <Link href="/forgot-password" className="text-sm font-medium text-indigo-600 hover:underline">
+            Forgot password?
+          </Link>
+        </div>
+
         <button
           disabled={loading}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-60"
