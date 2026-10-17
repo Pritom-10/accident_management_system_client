@@ -7,7 +7,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import {
   Menu, X, LogIn, LogOut, UserPlus, ChevronDown,
-  Building2, UserSearch, LayoutDashboard, UserRound,
+  Building2, UserSearch, LayoutDashboard,ShieldCheck, UserRound,
 } from 'lucide-react';
 import Logo from './Logo';
 import { useAuth } from './AuthProvider';
@@ -26,6 +26,7 @@ export default function Navbar() {
   const dropdownRef = useRef(null);
 
   const canVolunteer = user && (user.roles.includes('volunteer') || user.roles.includes('admin'));
+  const isAdmin = user && user.roles.includes('admin');
   const firstName = user ? user.name.split(' ')[0] : '';
 
 
@@ -126,6 +127,14 @@ export default function Navbar() {
                   <LayoutDashboard size={16} /> Dashboard
                 </Link>
               )}
+                            {isAdmin && (
+                <Link
+                  href="/admin"
+                  className="flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800"
+                >
+                  <ShieldCheck size={16} /> Admin
+                </Link>
+              )}
               <Link href="/profile"className="flex items-center gap-2 rounded-full px-3 py-2 text-sm text-slate-700 hover:bg-white/70"><UserRound size={16} /> {firstName}</Link>
               <button
                 onClick={handleLogout}
@@ -192,6 +201,11 @@ export default function Navbar() {
                   {canVolunteer && (
                     <Link href="/volunteer/dashboard" className="mt-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-slate-700 hover:bg-white/70">
                       <LayoutDashboard size={16} /> Dashboard
+                    </Link>
+                  )}
+                                               {isAdmin && (
+                    <Link href="/admin" className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-slate-700 hover:bg-white/70">
+                      <ShieldCheck size={16} /> Admin panel
                     </Link>
                   )}
                   <Link href="/profile" className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-slate-700 hover:bg-white/70">
