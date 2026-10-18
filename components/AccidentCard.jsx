@@ -10,7 +10,7 @@ const statusMap = {
 export default function AccidentCard({ accident }) {
   const status = statusMap[accident.status] ?? statusMap.cleared;
   const time = accident.dateTime
-    ? new Date(accident.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      ? new Date(accident.dateTime).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Dhaka' })
     : '';
 
   return (

@@ -75,7 +75,7 @@ export default function LocationSearch() {
    
     params.set('district', selectedUpazila.district);
   }
-  const href = params.toString() ? `/accidents?${params.toString()}` : '/accidents';
+  const href = params.toString() ? `/news?${params.toString()}` : '/news';
 
   const anySelected = division || district || areaKey;
 

@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ShieldCheck, Lock, FileWarning, HeartHandshake, UserSearch, Users, History } from 'lucide-react';
+import { ShieldCheck, Lock, FileWarning, Newspaper, HeartHandshake, UserSearch, Users, History } from 'lucide-react';
 import { useAuth } from '../../components/AuthProvider';
 import { useAdminData } from '../../lib/useAdminData';
 import ReportsTab from '../../components/admin/ReportsTab';
+import NewsTab from '../../components/admin/NewsTab';
 import VolunteersTab from '../../components/admin/VolunteersTab';
 import PatientsTab from '../../components/admin/PatientsTab';
 import UsersTab from '../../components/admin/UsersTab';
@@ -31,10 +32,11 @@ function AdminPanel() {
 
   useEffect(() => {
     reloadStats();
-  }, [tab]); 
+  }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const tabs = [
     { id: 'reports', label: 'Reports', icon: FileWarning, badge: stats.pendingReports },
+    { id: 'news', label: 'News', icon: Newspaper, badge: stats.pendingNews },
     { id: 'volunteers', label: 'Volunteers', icon: HeartHandshake, badge: stats.pendingVolunteers },
     { id: 'patients', label: 'Unidentified patients', icon: UserSearch, badge: stats.pendingPatients },
     { id: 'users', label: 'Users', icon: Users },
@@ -48,7 +50,7 @@ function AdminPanel() {
       </span>
       <h1 className="mt-4 text-3xl font-semibold text-slate-900">Admin panel</h1>
       <p className="mt-2 max-w-xl text-sm text-slate-600">
-        Approve reports, review volunteers and patients, and manage users. The number on a tab is how many are waiting.
+        Approve reports and news, review volunteers and patients, and manage users. The number on a tab is how many are waiting.
       </p>
 
       <div className="mt-8 flex flex-wrap gap-2">
@@ -72,6 +74,7 @@ function AdminPanel() {
 
       <div className="mt-6">
         {tab === 'reports' && <ReportsTab />}
+        {tab === 'news' && <NewsTab />}
         {tab === 'volunteers' && <VolunteersTab />}
         {tab === 'patients' && <PatientsTab />}
         {tab === 'users' && <UsersTab />}

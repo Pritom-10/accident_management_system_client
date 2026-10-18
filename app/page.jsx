@@ -1,4 +1,5 @@
 import Hero from '../components/Hero';
+import LatestNews from '../components/LatestNews';
 import AccidentGrid from '../components/AccidentGrid';
 import HospitalDirectory from '../components/HospitalDirectory';
 import { API_BASE } from '../lib/api';
@@ -9,25 +10,27 @@ async function getJson(path) {
     if (!res.ok) return [];
     return res.json();
   } catch {
-    return [];
+    return []; 
   }
 }
 
 export default async function HomePage() {
-  const [accidents, hospitals] = await Promise.all([
+  const [accidents, hospitals, news] = await Promise.all([
     getJson('/accidents'),
     getJson('/hospitals'),
+    getJson('/news?limit=3'),
   ]);
 
   const stats = {
     casesUnderResponse: accidents.filter((a) => a.status === 'rescue_in_progress').length,
     casesSolved: accidents.filter((a) => a.status === 'cleared').length,
-    availableVolunteers: null,
+    availableVolunteers: null, 
   };
 
   return (
     <main>
       <Hero stats={stats} />
+      <LatestNews posts={news.items || []} />
       <AccidentGrid accidents={accidents.slice(0, 4)} />
       <HospitalDirectory hospitals={hospitals.slice(0, 4)} />
     </main>
