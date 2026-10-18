@@ -70,6 +70,8 @@ export default function Navbar() {
     
         <nav className="hidden items-center gap-1 lg:flex">
           <Link href="/" className={pill(isActive('/'))}>Home</Link>
+          <Link href="/accidents" className={pill(isActive('/accidents'))}>Accidents</Link>
+          <Link href="/map" className={pill(isActive('/map'))}>Map</Link>
           <Link href="/news" className={pill(isActive('/news'))}>News</Link>
 
           <div ref={dropdownRef} className="relative">
@@ -181,6 +183,8 @@ export default function Navbar() {
           >
             <div className="flex flex-col gap-1 px-6 py-4">
               <Link href="/" className={`rounded-xl px-4 py-3 text-sm ${isActive('/') ? 'bg-slate-900 text-white' : 'text-slate-700 hover:bg-white/70'}`}>Home</Link>
+              <Link href="/accidents" className={`rounded-xl px-4 py-3 text-sm ${isActive('/accidents') ? 'bg-slate-900 text-white' : 'text-slate-700 hover:bg-white/70'}`}>News</Link>
+              <Link href="/map" className={`rounded-xl px-4 py-3 text-sm ${isActive('/map') ? 'bg-slate-900 text-white' : 'text-slate-700 hover:bg-white/70'}`}>Map</Link>
               <Link href="/news" className={`rounded-xl px-4 py-3 text-sm ${isActive('/news') ? 'bg-slate-900 text-white' : 'text-slate-700 hover:bg-white/70'}`}>News</Link>
 
               <p className="mt-2 px-4 text-xs font-medium uppercase tracking-wide text-slate-500">Hospitals &amp; Patients</p>

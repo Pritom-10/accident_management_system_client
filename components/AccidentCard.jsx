@@ -42,7 +42,7 @@ export default function AccidentCard({ accident }) {
       <p className="line-clamp-2 text-sm leading-relaxed text-slate-600">{accident.description}</p>
 
       <div className="mt-auto flex items-center justify-between border-t border-slate-200/70 pt-3 text-xs text-slate-600">
-        <span className="flex items-center gap-1"><MapPin size={13} />{accident.location?.area}, {accident.location?.district}</span>
+       <span className="flex items-center gap-1"><MapPin size={13} />{[accident.location?.area, accident.location?.district].filter(Boolean).join(', ')}</span>
         <span className="mono flex items-center gap-1"><Clock size={13} />{time}</span>
       </div>
     </Link>

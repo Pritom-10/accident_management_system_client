@@ -1,14 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, X, MapPin, Clock, Phone } from 'lucide-react';
+import { Check, X, MapPin, Clock, Phone, Flag, ExternalLink, ShieldOff } from 'lucide-react';
 import { useAdminData, adminAction, useRunner } from '../../lib/useAdminData';
 import { imageSrc } from '../../lib/imageUrl';
+import { osmLink } from '../../lib/geo';
 import {
   Pills, EmptyBox, Loading, RejectBox, cardClass, btnGreen, btnRed, btnGray, fmt,
 } from './shared';
 
-const filters = [['pending', 'Pending'], ['verified', 'Verified'], ['rejected', 'Rejected']];
+const filters = [
+  ['pending', 'Pending'],
+  ['verified', 'Verified'],
+  ['flagged', 'Reported'],
+  ['rejected', 'Rejected'],
+];
+
 const statusLabel = {
   pending: 'Pending',
   verified: 'Verified',
@@ -25,6 +32,9 @@ export default function ReportsTab() {
 
   const setStatus = (r, status, msg) =>
     run(r._id, () => adminAction('PATCH', `/reports/${r._id}/status`, { status }), msg);
+
+  const dismissFlags = (r) =>
+    run(r._id, () => adminAction('PATCH', `/reports/${r._id}/clear-flags`), 'Reports dismissed');
 
   async function reject(r, reason, flags) {
     const ok = await run(
@@ -46,12 +56,16 @@ export default function ReportsTab() {
       {loading ? (
         <Loading />
       ) : data.length === 0 ? (
-        <EmptyBox text={`No ${filter} reports.`} />
+        <EmptyBox text={`No ${filter === 'flagged' ? 'reported' : filter} reports.`} />
       ) : (
         <div className="space-y-4">
           {data.map((r) => {
             const busy = busyId === r._id;
             const isPublic = ['verified', 'rescue_in_progress', 'cleared'].includes(r.status);
+            const hasPin = typeof r.location?.lat === 'number' && typeof r.location?.lng === 'number';
+            const flagCount = r.flags?.length || 0;
+            const place = [r.location?.area, r.location?.district, r.location?.division].filter(Boolean).join(', ');
+
             return (
               <div key={r._id} className={cardClass}>
                 <div className="flex flex-col gap-4 sm:flex-row">
@@ -69,11 +83,21 @@ export default function ReportsTab() {
                     <p className="mt-2 text-sm leading-relaxed text-slate-600">{r.description}</p>
 
                     <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-slate-600">
-                      <span className="flex items-center gap-1">
-                        <MapPin size={13} /> {r.location?.area}, {r.location?.district}, {r.location?.division}
-                      </span>
+                      <span className="flex items-center gap-1"><MapPin size={13} /> {place}</span>
                       <span className="flex items-center gap-1"><Clock size={13} /> {fmt(r.dateTime)}</span>
                       <span className="flex items-center gap-1"><Phone size={13} /> {r.reporterPhone}</span>
+                      {hasPin ? (
+                        <a
+                          href={osmLink(r.location.lat, r.location.lng)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 font-medium text-indigo-600 hover:underline"
+                        >
+                          <ExternalLink size={13} /> Open on map
+                        </a>
+                      ) : (
+                        <span className="text-slate-400">No map pin</span>
+                      )}
                     </div>
 
                     {r.status === 'rejected' && r.rejectionReason && (
@@ -81,6 +105,17 @@ export default function ReportsTab() {
                     )}
                   </div>
                 </div>
+
+                {flagCount > 0 && (
+                  <div className="mt-3 rounded-xl bg-amber-50 p-3 text-xs text-amber-800">
+                    <p className="flex items-center gap-1.5 font-medium">
+                      <Flag size={13} /> Reported {flagCount} {flagCount === 1 ? 'time' : 'times'} as fake or wrong
+                    </p>
+                    {r.flags.filter((f) => f.reason).slice(0, 5).map((f, i) => (
+                      <p key={i} className="mt-1">{f.reason}</p>
+                    ))}
+                  </div>
+                )}
 
                 <div className="mt-4 flex flex-wrap gap-2">
                   {!isPublic && (
@@ -102,6 +137,12 @@ export default function ReportsTab() {
                   {isPublic && r.status !== 'cleared' && (
                     <button disabled={busy} onClick={() => setStatus(r, 'cleared', 'Status updated')} className={btnGray}>
                       Mark cleared
+                    </button>
+                  )}
+
+                  {flagCount > 0 && (
+                    <button disabled={busy} onClick={() => dismissFlags(r)} className={btnGray}>
+                      <ShieldOff size={14} /> Dismiss reports
                     </button>
                   )}
 

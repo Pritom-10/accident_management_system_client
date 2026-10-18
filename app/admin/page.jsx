@@ -35,7 +35,7 @@ function AdminPanel() {
   }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const tabs = [
-    { id: 'reports', label: 'Reports', icon: FileWarning, badge: stats.pendingReports },
+    { id: 'reports', label: 'Reports', icon: FileWarning, badge: (stats.pendingReports || 0) + (stats.flaggedReports || 0) },
     { id: 'news', label: 'News', icon: Newspaper, badge: stats.pendingNews },
     { id: 'volunteers', label: 'Volunteers', icon: HeartHandshake, badge: stats.pendingVolunteers },
     { id: 'patients', label: 'Unidentified patients', icon: UserSearch, badge: stats.pendingPatients },
