@@ -1,40 +1,77 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { Siren, Send, Loader2, CheckCircle2 } from 'lucide-react';
+import { API_BASE } from '../../lib/api';
+import { bdLocations } from '../../lib/bdLocations';
 import ImageUpload from '../../components/ImageUpload';
+import LocationPicker from '../../components/map/LocationPicker';
 
-const API_BASE = (process.env.NEXT_PUBLIC_API_ORIGIN || 'http://localhost:5000') + '/api';
-const divisions = ['Dhaka', 'Chattogram', 'Rajshahi', 'Khulna', 'Barishal', 'Sylhet', 'Rangpur', 'Mymensingh'];
-const field = 'w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2.5 text-sm text-slate-700';
+const field =
+  'w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2.5 text-sm text-slate-700 disabled:cursor-not-allowed disabled:opacity-60';
 const label = 'mb-1 block text-sm font-medium text-slate-700';
+const divisions = Object.keys(bdLocations);
+const byName = (a, b) => a.localeCompare(b);
 
-const initialForm = {
-  accidentType: '', description: '', photoUrl: '',
-  division: '', district: '', area: '', address: '',
-  dateTime: '', reporterPhone: '',
+function nowLocal() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+const emptyForm = {
+  accidentType: '',
+  description: '',
+  division: '',
+  district: '',
+  area: '',
+  address: '',
+  dateTime: '',
+  reporterPhone: '',
 };
 
 export default function ReportAccidentPage() {
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState(emptyForm);
+  const [photoUrl, setPhotoUrl] = useState('');
+  const [pin, setPin] = useState(null);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
-  const update = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setForm((f) => ({ ...f, dateTime: f.dateTime || nowLocal() }));
+  }, []);
+
+  const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+  const districts = form.division ? Object.keys(bdLocations[form.division] || {}).sort(byName) : [];
+  const upazilas =
+    form.division && form.district ? [...(bdLocations[form.division]?.[form.district] || [])].sort(byName) : [];
+
+  function reset() {
+    setForm({ ...emptyForm, dateTime: nowLocal() });
+    setPhotoUrl('');
+    setPin(null);
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
 
     const payload = {
-      caseId: `ACC-${Date.now()}`,
       accidentType: form.accidentType,
       description: form.description,
-      photoUrl: form.photoUrl || undefined,
-      location: { division: form.division, district: form.district, area: form.area, address: form.address },
+      photoUrl: photoUrl || undefined,
+      location: {
+        division: form.division,
+        district: form.district,
+        area: form.area,
+        address: form.address,
+        lat: pin ? pin.lat : undefined,
+        lng: pin ? pin.lng : undefined,
+      },
       dateTime: form.dateTime ? new Date(form.dateTime).toISOString() : new Date().toISOString(),
       reporterPhone: form.reporterPhone,
     };
@@ -45,12 +82,14 @@ export default function ReportAccidentPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) throw new Error();
-      toast.success('Report submitted successfully');
-      setForm(initialForm);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Could not submit the report');
+
+      toast.success('Report submitted');
+      reset();
       setDone(true);
-    } catch {
-      toast.error('Could not submit the report. Is the backend running?');
+    } catch (err) {
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -64,17 +103,23 @@ export default function ReportAccidentPage() {
         </span>
         <h1 className="mt-4 text-3xl font-semibold text-slate-900">Report an accident or emergency</h1>
         <p className="mt-2 text-sm text-slate-600">
-          Your report goes to the administrator for verification, and nearby volunteers are notified immediately.
+          You do not need an account. An administrator checks every report before it is shown to the public.
+        </p>
+        <p className="mt-2 rounded-xl bg-rose-50 p-3 text-xs text-rose-700">
+          If someone is in danger right now, call 999 first.
         </p>
 
         {done ? (
           <div className="mt-8 flex flex-col items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-8 text-center">
             <CheckCircle2 size={36} className="text-emerald-600" />
             <p className="text-sm text-emerald-700">
-              Thank you. Your report will appear on the public list once an administrator verifies it.
+              Thank you. Your report will appear on the map and the public list once an administrator verifies it.
             </p>
             <div className="flex gap-3">
-              <button onClick={() => setDone(false)} className="rounded-full border border-emerald-300 bg-white/70 px-4 py-2 text-sm text-emerald-700">
+              <button
+                onClick={() => setDone(false)}
+                className="rounded-full border border-emerald-300 bg-white/70 px-4 py-2 text-sm text-emerald-700"
+              >
                 Submit another
               </button>
               <Link href="/accidents" className="rounded-full bg-emerald-600 px-4 py-2 text-sm text-white">
@@ -83,53 +128,101 @@ export default function ReportAccidentPage() {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="mt-8 space-y-4 rounded-2xl border border-white/50 bg-white/50 p-6 backdrop-blur-xl">
+          <form onSubmit={handleSubmit} className="mt-8 space-y-5 rounded-2xl border border-white/50 bg-white/50 p-6 backdrop-blur-xl">
             <div>
               <label className={label}>Accident type</label>
-              <input required value={form.accidentType} onChange={update('accidentType')} placeholder="Road accident, fire, drowning..." className={field} />
+              <input
+                required
+                list="accident-types"
+                value={form.accidentType}
+                onChange={set('accidentType')}
+                placeholder="Road accident, fire, drowning..."
+                className={field}
+              />
+              <datalist id="accident-types">
+                <option value="Road accident" />
+                <option value="Fire" />
+                <option value="Drowning" />
+                <option value="Building collapse" />
+                <option value="Train accident" />
+                <option value="Boat accident" />
+              </datalist>
             </div>
+
             <div>
-              <label className={label}>Description</label>
-              <textarea required rows={4} value={form.description} onChange={update('description')} className={field} />
+              <label className={label}>What happened?</label>
+              <textarea required rows={4} value={form.description} onChange={set('description')} className={field} />
             </div>
 
-            <ImageUpload value={form.photoUrl} onChange={(url) => setForm({ ...form, photoUrl: url })} />
+            <ImageUpload value={photoUrl} onChange={setPhotoUrl} />
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className={label}>Division</label>
-                <select required value={form.division} onChange={update('division')} className={field}>
-                  <option value="">Select</option>
+            <div>
+              <p className="mb-2 text-sm font-medium text-slate-900">Where did it happen?</p>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <select
+                  required
+                  value={form.division}
+                  onChange={(e) => setForm({ ...form, division: e.target.value, district: '', area: '' })}
+                  className={field}
+                >
+                  <option value="">Division</option>
                   {divisions.map((d) => <option key={d}>{d}</option>)}
                 </select>
+                <select
+                  required
+                  value={form.district}
+                  disabled={!form.division}
+                  onChange={(e) => setForm({ ...form, district: e.target.value, area: '' })}
+                  className={field}
+                >
+                  <option value="">District</option>
+                  {districts.map((d) => <option key={d}>{d}</option>)}
+                </select>
+                <select value={form.area} disabled={!form.district} onChange={set('area')} className={field}>
+                  <option value="">Upazila (optional)</option>
+                  {upazilas.map((u) => <option key={u}>{u}</option>)}
+                </select>
               </div>
-              <div>
-                <label className={label}>District</label>
-                <input required value={form.district} onChange={update('district')} className={field} />
-              </div>
-              <div>
-                <label className={label}>Area</label>
-                <input required value={form.area} onChange={update('area')} className={field} />
-              </div>
-              <div>
-                <label className={label}>Address (optional)</label>
-                <input value={form.address} onChange={update('address')} className={field} />
-              </div>
+              <input
+                value={form.address}
+                onChange={set('address')}
+                maxLength={200}
+                placeholder="Road, landmark or nearby place (optional)"
+                className={`${field} mt-3`}
+              />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="mb-2 text-sm font-medium text-slate-900">Mark the place on the map</p>
+              <LocationPicker value={pin} onChange={setPin} />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className={label}>Date &amp; time</label>
-                <input required type="datetime-local" value={form.dateTime} onChange={update('dateTime')} className={field} />
+                <label className={label}>Date and time</label>
+                <input required type="datetime-local" value={form.dateTime} onChange={set('dateTime')} className={field} />
               </div>
               <div>
                 <label className={label}>Your mobile number</label>
-                <input required value={form.reporterPhone} onChange={update('reporterPhone')} className={field} />
+                <input
+                  required
+                  type="tel"
+                  value={form.reporterPhone}
+                  onChange={set('reporterPhone')}
+                  placeholder="01XXXXXXXXX"
+                  className={field}
+                />
               </div>
             </div>
+            <p className="-mt-2 text-xs text-slate-500">
+              Your number is never shown to the public. Only admins and approved volunteers can see it.
+            </p>
 
-            <button type="submit" disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-rose-600 px-4 py-3 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-60">
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-rose-600 px-4 py-3 text-sm font-medium text-white hover:bg-rose-700 disabled:opacity-60"
+            >
               {loading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
               {loading ? 'Submitting...' : 'Submit report'}
             </button>
