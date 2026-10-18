@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ShieldCheck, Lock, FileWarning, Newspaper, HeartHandshake, UserSearch, Users, History } from 'lucide-react';
+import { ShieldCheck, Lock, FileWarning, Newspaper, HeartHandshake, UserSearch, Users, History, Droplet } from 'lucide-react';
+import BloodTab from '../../components/admin/BloodTab';
 import { useAuth } from '../../components/AuthProvider';
 import { useAdminData } from '../../lib/useAdminData';
 import ReportsTab from '../../components/admin/ReportsTab';
@@ -37,6 +38,7 @@ function AdminPanel() {
   const tabs = [
     { id: 'reports', label: 'Reports', icon: FileWarning, badge: (stats.pendingReports || 0) + (stats.flaggedReports || 0) },
     { id: 'news', label: 'News', icon: Newspaper, badge: stats.pendingNews },
+    { id: 'blood', label: 'Blood', icon: Droplet },
     { id: 'volunteers', label: 'Volunteers', icon: HeartHandshake, badge: stats.pendingVolunteers },
     { id: 'patients', label: 'Unidentified patients', icon: UserSearch, badge: stats.pendingPatients },
     { id: 'users', label: 'Users', icon: Users },
@@ -75,6 +77,7 @@ function AdminPanel() {
       <div className="mt-6">
         {tab === 'reports' && <ReportsTab />}
         {tab === 'news' && <NewsTab />}
+        {tab === 'blood' && <BloodTab />}
         {tab === 'volunteers' && <VolunteersTab />}
         {tab === 'patients' && <PatientsTab />}
         {tab === 'users' && <UsersTab />}
