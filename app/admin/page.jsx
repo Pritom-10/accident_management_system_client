@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ShieldCheck, Lock, FileWarning, Newspaper, HeartHandshake, UserSearch, Users, History, Droplet } from 'lucide-react';
+import { ShieldCheck, Lock, Coins, FileWarning, Newspaper, HeartHandshake, UserSearch, Users, History, Droplet } from 'lucide-react';
 import BloodTab from '../../components/admin/BloodTab';
 import { useAuth } from '../../components/AuthProvider';
 import { useAdminData } from '../../lib/useAdminData';
@@ -12,6 +12,7 @@ import VolunteersTab from '../../components/admin/VolunteersTab';
 import PatientsTab from '../../components/admin/PatientsTab';
 import UsersTab from '../../components/admin/UsersTab';
 import ActivityTab from '../../components/admin/ActivityTab';
+import CampaignsTab from '../../components/admin/CampaignsTab';
 
 function Notice({ icon: Icon, title, text, children }) {
   return (
@@ -39,6 +40,7 @@ function AdminPanel() {
     { id: 'reports', label: 'Reports', icon: FileWarning, badge: (stats.pendingReports || 0) + (stats.flaggedReports || 0) },
     { id: 'news', label: 'News', icon: Newspaper, badge: stats.pendingNews },
     { id: 'blood', label: 'Blood', icon: Droplet },
+    { id: 'campaigns', label: 'Campaigns', icon: Coins, badge: (stats.pendingCampaigns || 0) + (stats.flaggedCampaigns || 0) },
     { id: 'volunteers', label: 'Volunteers', icon: HeartHandshake, badge: stats.pendingVolunteers },
     { id: 'patients', label: 'Unidentified patients', icon: UserSearch, badge: stats.pendingPatients },
     { id: 'users', label: 'Users', icon: Users },
@@ -78,6 +80,7 @@ function AdminPanel() {
         {tab === 'reports' && <ReportsTab />}
         {tab === 'news' && <NewsTab />}
         {tab === 'blood' && <BloodTab />}
+        {tab === 'campaigns' && <CampaignsTab />}
         {tab === 'volunteers' && <VolunteersTab />}
         {tab === 'patients' && <PatientsTab />}
         {tab === 'users' && <UsersTab />}
