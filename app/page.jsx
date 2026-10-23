@@ -1,6 +1,5 @@
 import HomeHero from '../components/home/HomeHero';
 import Ticker from '../components/home/Ticker';
-import ActionGrid from '../components/home/ActionGrid';
 import StatsBand from '../components/home/StatsBand';
 import Rail from '../components/home/Rail';
 import LiveMap from '../components/home/LiveMap';
@@ -43,12 +42,17 @@ export default async function HomePage() {
     donors: bloodStats?.donors ?? 0,
     raised: donateStats?.raised ?? 0,
   };
+  const counts = {
+    bloodOpen: stats.bloodOpen,
+    campaigns: donateStats?.activeCampaigns ?? 0,
+    pins: pins.length,
+    hospitals: hospitals.filter((h) => !h.isPinned).length,
+  };
 
   return (
     <main>
-      <HomeHero liveCount={underResponse.length} blood={blood.items?.[0] || null} accident={underResponse[0] || null} />
+      <HomeHero liveCount={underResponse.length} counts={counts} />
       <Ticker accidents={accidents} />
-      <ActionGrid />
       <StatsBand stats={stats} />
 
       <Rail
