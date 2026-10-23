@@ -148,7 +148,7 @@ export default function SosPage() {
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="text-center">
         <h1 className="text-3xl font-semibold leading-tight text-slate-900 md:text-4xl">Do you need help right now?</h1>
         <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-slate-600">
-          Press SOS to tell volunteers near you. If someone is in danger, call 999 first. Sahayota does not replace 999.
+          Press SOS to tell volunteers near you. If someone is in danger, call 999 first. ResQ does not replace 999.
         </p>
       </motion.div>
 

@@ -138,7 +138,7 @@ export default async function NewsDetailPage({ params }) {
           )}
         </p>
         <p className="mt-1 text-xs text-slate-500">
-          Posted by {post.authorName || 'Sahayota'} on {formatDateTime(post.publishedAt || post.createdAt)}
+          Posted by {post.authorName || 'ResQ'} on {formatDateTime(post.publishedAt || post.createdAt)}
         </p>
       </div>
     </main>

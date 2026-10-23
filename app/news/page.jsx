@@ -8,7 +8,7 @@ import { API_BASE } from '../../lib/api';
 const PAGE_SIZE = 9;
 const FILTER_KEYS = ['q', 'division', 'district', 'area', 'vehicle', 'verified'];
 
-export const metadata = { title: 'Accident news | Sahayota' };
+export const metadata = { title: 'Accident news | ResQ' };
 
 async function getNews(params) {
   try {

@@ -22,7 +22,7 @@ const floaters = [
 
 const howItWorks = [
   { icon: ShieldCheck, title: 'Checked by an admin', text: 'Every campaign is reviewed with the family’s documents before it goes live.' },
-  { icon: Wallet, title: 'Money goes straight to the family', text: 'You pay their bKash, Nagad, Rocket or bank account. Sahayota never holds your money.' },
+  { icon: Wallet, title: 'Money goes straight to the family', text: 'You pay their bKash, Nagad, Rocket or bank account. ResQ never holds your money.' },
   { icon: Eye, title: 'Everything is public', text: 'See every donation and every bill, with a photo of the receipt.' },
 ];
 

@@ -192,7 +192,7 @@ export default function Navbar() {
             scrolled ? 'shadow-xl shadow-slate-900/10' : 'shadow-sm shadow-slate-900/5'
           }`}
         >
-          <Link href="/" aria-label="Sahayota home" className="pl-2">
+          <Link href="/" aria-label="ResQ home" className="pl-2">
             <Logo size={30} />
           </Link>
 

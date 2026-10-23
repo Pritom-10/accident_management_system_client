@@ -16,7 +16,7 @@ const emptyLoc = { division: '', district: '', areaKey: '' };
 function DonorCard({ donor, group, index }) {
   const place = [donor.area, donor.district].filter(Boolean).join(', ');
   const initials = donor.name.split(' ').map((p) => p[0]).slice(0, 2).join('').toUpperCase();
-  const message = `Hello ${donor.name.split(' ')[0]}, I found you on Sahayota. ${group ? `I need ${group} blood.` : 'I need blood.'} Can you help?`;
+  const message = `Hello ${donor.name.split(' ')[0]}, I found you on ResQ. ${group ? `I need ${group} blood.` : 'I need blood.'} Can you help?`;
 
   return (
     <motion.div

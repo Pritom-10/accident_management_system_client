@@ -281,7 +281,7 @@ export default function DonateModal({ campaign, onClose }) {
 
                 <p className="flex items-start gap-2 rounded-xl bg-emerald-50 p-3 text-xs text-emerald-800">
                   <ShieldCheck size={15} className="mt-0.5 shrink-0" />
-                  The money goes straight to the family&rsquo;s account. Sahayota never holds your money, and never asks you to send it anywhere else.
+                  The money goes straight to the family&rsquo;s account. ResQ never holds your money, and never asks you to send it anywhere else.
                 </p>
 
                 <div className="flex gap-3">

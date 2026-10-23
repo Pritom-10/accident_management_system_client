@@ -180,7 +180,7 @@ export default function BloodRequestDetailPage() {
   const canManage = r.isOwner || Boolean(r.responses);
   const place = [r.location?.area, r.location?.district, r.location?.division].filter(Boolean).join(', ');
   const pct = Math.min(100, Math.round((r.unitsDonated / r.unitsNeeded) * 100));
-  const message = `Hello, I saw the ${r.bloodGroup} blood request at ${r.hospital?.name} on Sahayota.`;
+  const message = `Hello, I saw the ${r.bloodGroup} blood request at ${r.hospital?.name} on ResQ.`;
 
   const isDonor = Boolean(user?.donor?.isDonor);
   const eligibility = isDonor ? checkEligibility(user.donor) : null;

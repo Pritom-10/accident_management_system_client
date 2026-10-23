@@ -76,7 +76,7 @@ function AlertCard({ item, onRespond, busy }) {
                   <Phone size={13} /> Call {displayPhone(item.callerPhone)}
                 </a>
                 <a
-                  href={waLink(item.callerPhone, 'Hello, I saw your SOS on Sahayota. I am coming to help.')}
+                  href={waLink(item.callerPhone, 'Hello, I saw your SOS on ResQ. I am coming to help.')}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-1.5 rounded-full bg-emerald-600 px-4 py-2 text-xs font-medium text-white hover:bg-emerald-700"

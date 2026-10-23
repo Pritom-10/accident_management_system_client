@@ -7,7 +7,7 @@ import MotionProvider from '../components/MotionProvider';
 import { AuthProvider } from '../components/AuthProvider';
 
 export const metadata = {
-  title: 'Sahayota | Accident & Emergency Response',
+  title: 'ResQ | Accident & Emergency Response',
   description: 'Accident news, SOS alerts, blood donors, treatment fundraising and hospital information for Bangladesh.',
 };
 

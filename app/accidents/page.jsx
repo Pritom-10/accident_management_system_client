@@ -7,7 +7,7 @@ import { API_BASE } from '../../lib/api';
 
 const FILTER_KEYS = ['division', 'district', 'area', 'status'];
 
-export const metadata = { title: 'Accidents | Sahayota' };
+export const metadata = { title: 'Accidents | ResQ' };
 
 async function getJson(path) {
   try {
