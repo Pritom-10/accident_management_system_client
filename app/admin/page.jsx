@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ShieldCheck, Lock, Coins, FileWarning, Newspaper, HeartHandshake, UserSearch, Users, History, Droplet } from 'lucide-react';
+import { ShieldCheck, Lock, FileWarning, Newspaper, HeartHandshake, UserSearch, Users, History, Droplet, Coins, Siren } from 'lucide-react';
+import SosTab from '../../components/admin/SosTab';
 import BloodTab from '../../components/admin/BloodTab';
 import { useAuth } from '../../components/AuthProvider';
 import { useAdminData } from '../../lib/useAdminData';
@@ -37,6 +38,7 @@ function AdminPanel() {
   }, [tab]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const tabs = [
+    { id: 'sos', label: 'SOS', icon: Siren, badge: stats.activeSos },
     { id: 'reports', label: 'Reports', icon: FileWarning, badge: (stats.pendingReports || 0) + (stats.flaggedReports || 0) },
     { id: 'news', label: 'News', icon: Newspaper, badge: stats.pendingNews },
     { id: 'blood', label: 'Blood', icon: Droplet },
@@ -77,6 +79,7 @@ function AdminPanel() {
       </div>
 
       <div className="mt-6">
+        {tab === 'sos' && <SosTab />}
         {tab === 'reports' && <ReportsTab />}
         {tab === 'news' && <NewsTab />}
         {tab === 'blood' && <BloodTab />}
