@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 import {
   Building2, ChevronDown, ClipboardList, Droplet, HeartHandshake, LayoutDashboard, LogIn, LogOut,
   MapPinned, Menu, PenLine, Phone, Receipt, ShieldCheck, Siren, UserPlus, UserRound, UserSearch, X,
+  BellRing, HeartPulse,
 } from 'lucide-react';
 import Logo from './Logo';
 import { useAuth } from './AuthProvider';
@@ -39,13 +40,15 @@ const hospitalLinks = [
 ];
 
 const quickLinks = [
-  { title: 'Report an emergency', desc: 'No account needed', href: '/report', icon: Siren, tone: 'bg-rose-100 text-rose-600' },
+  { title: 'Send an SOS', desc: 'One tap. Volunteers are told', href: '/sos', icon: Siren, tone: 'bg-rose-100 text-rose-600' },
+  { title: 'First aid guide', desc: 'CPR, bleeding, broken bones', href: '/first-aid', icon: HeartPulse, tone: 'bg-emerald-100 text-emerald-600' },
+  { title: 'Report an accident', desc: 'No account needed', href: '/report', icon: PenLine, tone: 'bg-amber-100 text-amber-600' },
   { title: 'Accident map', desc: 'Blackspots and heatmap', href: '/map', icon: MapPinned, tone: 'bg-violet-100 text-violet-600' },
   { title: 'Find blood donors', desc: 'By group and area', href: '/blood/donors', icon: Droplet, tone: 'bg-rose-100 text-rose-600' },
   { title: 'Start a campaign', desc: 'Raise money for treatment', href: '/donate/start', icon: HeartHandshake, tone: 'bg-emerald-100 text-emerald-600' },
 ];
 
-const exploreRoots = ['/hospitals', '/unidentified-patients', '/map', '/report'];
+const exploreRoots = ['/hospitals', '/unidentified-patients', '/map', '/report', '/sos', '/first-aid'];
 
 function Avatar({ user, size = 36 }) {
   const initials = user.name
@@ -119,6 +122,7 @@ export default function Navbar() {
         { label: user.donor?.isDonor ? 'Donor profile' : 'Become a donor', href: '/blood/donor', icon: Droplet },
         { label: 'Campaigns and donations', href: '/donate/mine', icon: Receipt },
         ...(canVolunteer ? [{ label: 'Volunteer dashboard', href: '/volunteer/dashboard', icon: LayoutDashboard }] : []),
+        ...(canVolunteer || user.donor?.isDonor ? [{ label: 'Nearby SOS alerts', href: '/sos/nearby', icon: BellRing }] : []),
         ...(canWrite ? [{ label: 'My news posts', href: '/news/mine', icon: PenLine }] : []),
         ...(isAdmin ? [{ label: 'Admin panel', href: '/admin', icon: ShieldCheck }] : []),
       ]
