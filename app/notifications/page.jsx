@@ -223,7 +223,7 @@ export default function NotificationsPage() {
         tone="violet"
         eyebrow="Alerts"
         title="Alerts on your phone"
-        subtitle="Get SOS, blood and breaking news alerts as notifications, even when Sahayota is closed. Free, and you can turn it off any time."
+        subtitle="Get SOS, blood and breaking news alerts as notifications, even when ResQ is closed. Free, and you can turn it off any time."
       />
 
       <motion.section
@@ -391,7 +391,7 @@ export default function NotificationsPage() {
       )}
 
       <p className="mt-6 rounded-2xl bg-slate-100 p-5 text-xs leading-relaxed text-slate-600">
-        We never put names, phone numbers or exact places in a notification. Those are shown only after you open Sahayota and log in.
+        We never put names, phone numbers or exact places in a notification. Those are shown only after you open ResQ and log in.
         Alerts do not replace 999. For anyone in danger, call 999 first.
       </p>
     </main>

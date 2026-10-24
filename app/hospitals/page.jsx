@@ -3,7 +3,7 @@ import HospitalExplorer from '../../components/hospitals/HospitalExplorer';
 import { PageHero } from '../../components/ui/kit';
 import { API_BASE } from '../../lib/api';
 
-export const metadata = { title: 'Hospitals and emergency numbers | Sahayota' };
+export const metadata = { title: 'Hospitals and emergency numbers | ResQ' };
 
 async function getHospitals() {
   try {

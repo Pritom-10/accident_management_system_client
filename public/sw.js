@@ -14,14 +14,14 @@ self.addEventListener('push', (event) => {
     body: data.body || '',
     icon: '/logo.svg',
     badge: '/logo.svg',
-    tag: data.tag || 'sahayota',
+    tag: data.tag || 'ResQ',
     renotify: Boolean(data.tag),
     requireInteraction: Boolean(data.urgent),
     vibrate: data.urgent ? [250, 120, 250, 120, 250] : [120],
     data: { url: data.url || '/' },
   };
 
-  event.waitUntil(self.registration.showNotification(data.title || 'Sahayota', options));
+  event.waitUntil(self.registration.showNotification(data.title || 'ResQ', options));
 });
 
 self.addEventListener('notificationclick', (event) => {

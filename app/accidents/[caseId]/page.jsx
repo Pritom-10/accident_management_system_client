@@ -115,7 +115,7 @@ export default async function AccidentDetailPage({ params }) {
       )}
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
-        <ShareButton title={item.accidentType} text={`Accident case ${item.caseId} on Sahayota`}>Share this case</ShareButton>
+        <ShareButton title={item.accidentType} text={`Accident case ${item.caseId} on ResQ`}>Share this case</ShareButton>
         <a href="tel:999" className="flex items-center gap-2 rounded-full bg-rose-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-rose-700">
           <Phone size={16} /> Call 999
         </a>

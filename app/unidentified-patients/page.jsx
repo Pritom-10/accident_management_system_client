@@ -6,7 +6,7 @@ import { API_BASE } from '../../lib/api';
 import { imageSrc } from '../../lib/imageUrl';
 import { dateText } from '../../lib/blood';
 
-export const metadata = { title: 'Unidentified patients | Sahayota' };
+export const metadata = { title: 'Unidentified patients | ResQ' };
 
 async function getPatients() {
   try {

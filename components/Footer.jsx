@@ -48,7 +48,7 @@ export default function Footer() {
               <div className="flex items-center gap-2.5">
                 <Logo size={36} showText={false} />
                 <span className="text-xl font-semibold tracking-tight text-white" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                  Sahayota
+                  ResQ
                 </span>
               </div>
               <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-400">
@@ -88,9 +88,9 @@ export default function Footer() {
           </div>
 
           <div className="mt-12 flex flex-col items-start justify-between gap-4 border-t border-white/10 pt-6 text-xs text-slate-500 sm:flex-row sm:items-center">
-            <p>© {new Date().getFullYear()} Sahayota. Made in Bangladesh.</p>
+            <p>© {new Date().getFullYear()} ResQ. Made in Bangladesh.</p>
             <p className="flex items-center gap-2">
-              <Siren size={13} /> Sahayota does not replace 999. In danger, call 999 first.
+              <Siren size={13} /> ResQ does not replace 999. In danger, call 999 first.
             </p>
             <Link href="/first-aid" className="flex items-center gap-1.5 text-slate-400 hover:text-white">
               <HeartPulse size={13} /> First aid guide
