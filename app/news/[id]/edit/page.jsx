@@ -6,6 +6,8 @@ import { Newspaper } from 'lucide-react';
 import RoleGate from '../../../../components/RoleGate';
 import NewsForm from '../../../../components/NewsForm';
 import { useAuth } from '../../../../components/AuthProvider';
+import { Skeleton } from '../../../../components/blood/ui';
+import { PageHero } from '../../../../components/ui/kit';
 import { API_BASE, apiFetch } from '../../../../lib/api';
 
 function Editor() {
@@ -27,20 +29,20 @@ function Editor() {
   const isAdmin = user.roles.includes('admin');
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-14">
-      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/25">
-        <Newspaper size={24} />
-      </span>
-      <h1 className="mt-4 text-3xl font-semibold text-slate-900">Edit news</h1>
-      {!isAdmin && (
-        <p className="mt-2 text-sm text-slate-600">After you save, an admin will check the post again.</p>
-      )}
+    <main className="mx-auto max-w-3xl px-4 py-8 md:py-12">
+      <PageHero
+        icon={<Newspaper size={24} />}
+        tone="indigo"
+        eyebrow={isAdmin ? 'Changes save at once' : 'It will be checked again'}
+        title="Edit news"
+        subtitle={isAdmin ? 'Update the story, then save.' : 'After you save, an admin will check the post again.'}
+      />
 
-      <div className="mt-8">
+      <div className="mt-6">
         {error ? (
-          <p className="text-sm text-rose-600">{error}</p>
+          <p className="rounded-2xl bg-rose-50 p-5 text-sm text-rose-700">{error}</p>
         ) : !post ? (
-          <p className="text-sm text-slate-600">Loading...</p>
+          <Skeleton className="h-96" />
         ) : (
           <NewsForm post={post} isAdmin={isAdmin} />
         )}

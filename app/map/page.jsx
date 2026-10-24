@@ -8,6 +8,7 @@ import { bdLocations } from '../../lib/bdLocations';
 import { divisionList, districtOptions } from '../../lib/locationOptions';
 import { PERIODS, BANDS, MIN_OPTIONS } from '../../lib/hotspots';
 import { osmLink } from '../../lib/geo';
+import { PageHero } from '../../components/ui/kit';
 import { formatDateTime } from '../../lib/newsOptions';
 
 const field = 'w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2.5 text-sm text-slate-700';
@@ -93,13 +94,13 @@ export default function AccidentMapPage() {
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-14">
-      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-600 text-white shadow-lg shadow-rose-600/25">
-        <MapPinned size={24} />
-      </span>
-      <h1 className="mt-4 text-3xl font-semibold text-slate-900">Accident map</h1>
-      <p className="mt-2 max-w-2xl text-sm text-slate-600">
-        See where accidents happen most. Blackspots are small areas with many cases. The heatmap shows how busy every area is.
-      </p>
+           <PageHero
+        icon={<MapPinned size={24} />}
+        tone="violet"
+        eyebrow="Blackspots and heatmap"
+        title="Accident map"
+        subtitle="See where accidents happen most. Blackspots are small areas with many cases. The heatmap shows how busy every area is."
+      />
 
       <div className="mt-8 flex flex-wrap gap-2">
         {modeButton('blackspot', 'Blackspots', AlertTriangle)}

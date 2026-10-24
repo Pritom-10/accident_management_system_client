@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { FileText, Pencil, Trash2, Plus, BadgeCheck } from 'lucide-react';
 import RoleGate from '../../../components/RoleGate';
 import { API_BASE, apiFetch } from '../../../lib/api';
+import { PageHero } from '../../../components/ui/kit';
 import { formatDateTime } from '../../../lib/newsOptions';
 
 const statusStyle = {
@@ -49,21 +50,19 @@ function MyPosts() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-14">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/25">
-            <FileText size={24} />
-          </span>
-          <h1 className="mt-4 text-3xl font-semibold text-slate-900">My posts</h1>
-        </div>
-        <Link
-          href="/news/write"
-          className="flex items-center gap-2 rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-700"
-        >
-          <Plus size={16} /> Write news
-        </Link>
-      </div>
+        <main className="mx-auto max-w-4xl px-4 py-8 md:py-12">
+           <PageHero
+        icon={<FileText size={24} />}
+        tone="indigo"
+        eyebrow="Your stories"
+        title="My posts"
+        subtitle="See what is waiting for review, what is live, and what was not approved."
+        actions={
+          <Link href="/news/write" className="flex items-center gap-2 rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/25 hover:bg-indigo-700">
+            <Plus size={16} /> Write news
+          </Link>
+        }
+      />
 
       <div className="mt-8 space-y-4">
         {posts === null ? (

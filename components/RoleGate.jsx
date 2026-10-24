@@ -1,18 +1,31 @@
 'use client';
 
 import Link from 'next/link';
-import { Lock } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Lock, ShieldX } from 'lucide-react';
 import { useAuth } from './AuthProvider';
+import { Skeleton } from './blood/ui';
 
-function Notice({ title, text, children }) {
+function Notice({ icon, tone, title, text, children }) {
   return (
     <main className="mx-auto max-w-lg px-6 py-20 text-center">
-      <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white/70 text-slate-600">
-        <Lock size={26} />
-      </span>
-      <h1 className="mt-4 text-2xl font-semibold text-slate-900">{title}</h1>
-      <p className="mt-2 text-sm text-slate-600">{text}</p>
-      <div className="mt-6">{children}</div>
+      <motion.span
+        initial={{ scale: 0.5, opacity: 0, rotate: -12 }}
+        animate={{ scale: 1, opacity: 1, rotate: 0 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 18 }}
+        className={`mx-auto flex h-20 w-20 items-center justify-center rounded-3xl shadow-lg ${tone}`}
+      >
+        {icon}
+      </motion.span>
+      <motion.h1 initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mt-6 text-2xl font-semibold text-slate-900">
+        {title}
+      </motion.h1>
+      <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.17 }} className="mt-2 text-sm leading-relaxed text-slate-600">
+        {text}
+      </motion.p>
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.24 }} className="mt-7 flex flex-wrap justify-center gap-3">
+        {children}
+      </motion.div>
     </main>
   );
 }
@@ -21,14 +34,22 @@ export default function RoleGate({ roles, deniedText = 'Your account does not ha
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <main className="mx-auto max-w-lg px-6 py-20 text-center text-sm text-slate-600">Loading...</main>;
+    return (
+      <main className="mx-auto max-w-3xl space-y-4 px-6 py-14">
+        <Skeleton className="h-12 w-56" />
+        <Skeleton className="h-72" />
+      </main>
+    );
   }
 
   if (!user) {
     return (
-      <Notice title="Please log in" text="You need to log in to open this page.">
-        <Link href="/login" className="rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-700">
+      <Notice icon={<Lock size={34} />} tone="bg-indigo-100 text-indigo-600 shadow-indigo-600/20" title="Please log in" text="You need to log in to open this page. It only takes a moment.">
+        <Link href="/login" className="rounded-full bg-indigo-600 px-7 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-600/25 hover:bg-indigo-700">
           Login
+        </Link>
+        <Link href="/register" className="rounded-full border border-slate-300/70 bg-white/80 px-7 py-3 text-sm font-medium text-slate-700 hover:bg-white">
+          Create an account
         </Link>
       </Notice>
     );
@@ -36,8 +57,8 @@ export default function RoleGate({ roles, deniedText = 'Your account does not ha
 
   if (!user.roles.some((r) => roles.includes(r))) {
     return (
-      <Notice title="Not allowed" text={deniedText}>
-        <Link href="/" className="rounded-full border border-slate-300/70 bg-white/70 px-5 py-2.5 text-sm font-medium text-slate-700">
+      <Notice icon={<ShieldX size={34} />} tone="bg-slate-200 text-slate-600 shadow-slate-400/20" title="Not allowed" text={deniedText}>
+        <Link href="/" className="rounded-full bg-slate-900 px-7 py-3 text-sm font-medium text-white hover:bg-slate-800">
           Back to home
         </Link>
       </Notice>
