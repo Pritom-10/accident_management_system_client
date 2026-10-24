@@ -1,14 +1,17 @@
 import { Newspaper } from 'lucide-react';
 import NewsCard from '../../components/NewsCard';
+import NewsFeatured from '../../components/NewsFeatured';
 import NewsFilters from '../../components/NewsFilters';
 import Pagination from '../../components/Pagination';
 import WriteNewsLinks from '../../components/WriteNewsLinks';
+import Reveal from '../../components/Reveal';
+import { PageHero, glass } from '../../components/ui/kit';
 import { API_BASE } from '../../lib/api';
 
 const PAGE_SIZE = 9;
 const FILTER_KEYS = ['q', 'division', 'district', 'area', 'vehicle', 'verified'];
 
-export const metadata = { title: 'Accident news | ResQ' };
+export const metadata = { title: 'Accident news | Sahayota' };
 
 async function getNews(params) {
   try {
@@ -33,48 +36,65 @@ export default async function NewsPage({ searchParams }) {
   const data = await getNews({ ...filters, page: requestedPage });
   const hasFilters = Object.keys(filters).length > 0;
 
-  return (
-    <main className="mx-auto max-w-6xl px-6 py-14">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/25">
-            <Newspaper size={24} />
-          </span>
-          <h1 className="mt-4 text-3xl font-semibold text-slate-900">Accident news</h1>
-          <p className="mt-2 max-w-xl text-sm text-slate-600">
-            Search by word or place, and filter by area, vehicle or whether the news is verified.
-          </p>
-        </div>
-        <WriteNewsLinks />
-      </div>
+  const showFeatured = data && data.page === 1 && !hasFilters && data.items.length >= 3;
+  const featured = showFeatured ? data.items[0] : null;
+  const rest = data ? (showFeatured ? data.items.slice(1) : data.items) : [];
 
-    
-      <div className="mt-8">
+  return (
+    <main className="mx-auto max-w-6xl px-4 py-8 md:py-12">
+      <PageHero
+        icon={<Newspaper size={24} />}
+        tone="indigo"
+        eyebrow="Stories you can trust"
+        title="Accident news"
+        subtitle="Posted by our admins and journalists. Each story shows whether it has been verified."
+        actions={<WriteNewsLinks />}
+        aside={
+          data && (
+            <div className="rounded-2xl border border-white/70 bg-white/70 px-5 py-3 backdrop-blur-xl">
+              <p className="mono text-2xl text-slate-900">{data.total}</p>
+              <p className="text-xs text-slate-600">{hasFilters ? 'Matching stories' : 'Stories'}</p>
+            </div>
+          )
+        }
+      />
+
+      <div className="mt-6">
         <NewsFilters key={JSON.stringify(filters)} initial={filters} />
       </div>
 
       {data === null ? (
-        <div className="mt-8 rounded-2xl border border-white/50 bg-white/40 p-10 text-center text-sm text-slate-600 backdrop-blur-xl">
+        <div className={`${glass} mt-8 p-10 text-center text-sm text-slate-600`}>
           Could not load the news. Please try again in a moment.
         </div>
       ) : (
         <>
-          <p className="mt-6 text-sm text-slate-600">
+          <p className="mt-8 text-sm text-slate-600">
             {data.total} {data.total === 1 ? 'story' : 'stories'}
             {hasFilters ? ' match your search' : ''}
             {data.pages > 1 ? ` · page ${data.page} of ${data.pages}` : ''}
           </p>
 
           {data.items.length === 0 ? (
-            <div className="mt-4 rounded-2xl border border-white/50 bg-white/40 p-10 text-center text-sm text-slate-600 backdrop-blur-xl">
+            <div className={`${glass} mt-4 p-10 text-center text-sm text-slate-600`}>
               {hasFilters ? 'No news matches this search. Try fewer filters.' : 'No news has been posted yet.'}
             </div>
           ) : (
-            <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {data.items.map((p) => (
-                <NewsCard key={p._id} post={p} />
-              ))}
-            </div>
+            <>
+              {featured && (
+                <Reveal className="mt-4">
+                  <NewsFeatured post={featured} />
+                </Reveal>
+              )}
+
+              <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {rest.map((p, i) => (
+                  <Reveal key={p._id} delay={(i % 3) * 0.07} className="h-full">
+                    <NewsCard post={p} />
+                  </Reveal>
+                ))}
+              </div>
+            </>
           )}
 
           <Pagination basePath="/news" params={filters} page={data.page} pages={data.pages} />

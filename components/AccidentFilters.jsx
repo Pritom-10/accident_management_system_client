@@ -2,12 +2,18 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, X } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Search, SlidersHorizontal, X } from 'lucide-react';
 import { divisionList, districtOptions, upazilaOptions } from '../lib/locationOptions';
 import { bdLocations } from '../lib/bdLocations';
+import { fieldClass, glass } from './ui/kit';
 
-const field = 'w-full rounded-xl border border-slate-200 bg-white/70 px-3 py-2.5 text-sm text-slate-700';
-const label = 'mb-1 block text-xs font-medium text-slate-600';
+const label = 'mb-1.5 block text-xs font-medium text-slate-600';
+const pills = [
+  ['', 'All cases'],
+  ['rescue_in_progress', 'Rescue in progress'],
+  ['cleared', 'Cleared'],
+];
 
 export default function AccidentFilters({ initial }) {
   const router = useRouter();
@@ -61,54 +67,63 @@ export default function AccidentFilters({ initial }) {
   const anyFilter = division || district || areaKey || status;
 
   return (
-    <form onSubmit={submit} className="space-y-4 rounded-2xl border border-white/50 bg-white/50 p-5 backdrop-blur-xl">
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <form onSubmit={submit} className={`${glass} space-y-5 p-5 md:p-6`}>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+          <SlidersHorizontal size={16} /> Filter cases
+        </p>
+        <div className="flex gap-1 rounded-full bg-white/70 p-1">
+          {pills.map(([value, text]) => (
+            <button key={text} type="button" onClick={() => setStatus(value)} className="relative rounded-full px-4 py-1.5 text-xs font-medium">
+              {status === value && (
+                <motion.span
+                  layoutId="acc-status"
+                  className="absolute inset-0 rounded-full bg-slate-900"
+                  transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                />
+              )}
+              <span className={`relative ${status === value ? 'text-white' : 'text-slate-700'}`}>{text}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-3">
         <div>
           <label htmlFor="a-division" className={label}>Division</label>
-          <select id="a-division" value={division} onChange={onDivisionChange} className={field}>
+          <select id="a-division" value={division} onChange={onDivisionChange} className={fieldClass}>
             <option value="">All divisions</option>
             {divisionList.map((d) => <option key={d} value={d}>{d}</option>)}
           </select>
         </div>
-
         <div>
           <label htmlFor="a-district" className={label}>District</label>
-          <select id="a-district" value={district} onChange={onDistrictChange} className={field}>
+          <select id="a-district" value={district} onChange={onDistrictChange} className={fieldClass}>
             <option value="">All districts</option>
             {districts.map((d) => <option key={d} value={d}>{d}</option>)}
           </select>
         </div>
-
         <div>
           <label htmlFor="a-area" className={label}>Upazila</label>
-          <select id="a-area" value={areaKey} onChange={(e) => setAreaKey(e.target.value)} className={field}>
+          <select id="a-area" value={areaKey} onChange={(e) => setAreaKey(e.target.value)} className={fieldClass}>
             <option value="">All upazilas</option>
             {upazilas.map((u) => (
               <option key={u.key} value={u.key}>{district ? u.name : `${u.name} (${u.district})`}</option>
             ))}
           </select>
         </div>
-
-        <div>
-          <label htmlFor="a-status" className={label}>Status</label>
-          <select id="a-status" value={status} onChange={(e) => setStatus(e.target.value)} className={field}>
-            <option value="">All</option>
-            <option value="rescue_in_progress">Rescue in progress</option>
-            <option value="cleared">Cleared</option>
-          </select>
-        </div>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <button className="flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-800">
+        <motion.button
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.96 }}
+          className="flex items-center gap-2 rounded-full bg-slate-900 px-6 py-2.5 text-sm font-medium text-white hover:bg-slate-800"
+        >
           <Search size={16} /> Search
-        </button>
+        </motion.button>
         {anyFilter && (
-          <button
-            type="button"
-            onClick={clearAll}
-            className="flex items-center gap-1 rounded-full bg-white/70 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-white"
-          >
+          <button type="button" onClick={clearAll} className="flex items-center gap-1 rounded-full bg-white/80 px-3.5 py-2 text-xs font-medium text-slate-600 hover:bg-white">
             <X size={12} /> Clear all
           </button>
         )}

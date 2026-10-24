@@ -1,6 +1,9 @@
-import HospitalDirectory from '../../components/HospitalDirectory';
+import { Building2 } from 'lucide-react';
+import HospitalExplorer from '../../components/hospitals/HospitalExplorer';
+import { PageHero } from '../../components/ui/kit';
+import { API_BASE } from '../../lib/api';
 
-const API_BASE = (process.env.NEXT_PUBLIC_API_ORIGIN || 'http://localhost:5000') + '/api';
+export const metadata = { title: 'Hospitals and emergency numbers | Sahayota' };
 
 async function getHospitals() {
   try {
@@ -12,18 +15,34 @@ async function getHospitals() {
   }
 }
 
-export const metadata = { title: 'Hospitals & emergency contacts | ResQ' };
-
 export default async function HospitalsPage() {
   const hospitals = await getHospitals();
+  const real = hospitals.filter((h) => !h.isPinned);
+  const admitted = real.reduce((sum, h) => sum + (h.patientCount || 0), 0);
 
   return (
-    <main>
-      <div className="mx-auto max-w-6xl px-6 pt-12">
-        <h1 className="text-3xl font-semibold text-slate-900">Hospitals &amp; emergency contacts</h1>
-        <p className="mt-2 text-sm text-slate-600">The full directory. Tap any number to call directly.</p>
-      </div>
-      <HospitalDirectory hospitals={hospitals} showViewAll={false} />
+    <main className="mx-auto max-w-6xl px-4 py-8 md:py-12">
+      <PageHero
+        icon={<Building2 size={24} />}
+        tone="sky"
+        eyebrow="Tap a number to call"
+        title="Hospitals and emergency numbers"
+        subtitle="Search by name or place. Admitted patient counts are updated by volunteers."
+        aside={
+          <div className="flex gap-3">
+            <div className="rounded-2xl border border-white/70 bg-white/70 px-5 py-3 backdrop-blur-xl">
+              <p className="mono text-2xl text-slate-900">{real.length}</p>
+              <p className="text-xs text-slate-600">Listed</p>
+            </div>
+            <div className="rounded-2xl border border-white/70 bg-white/70 px-5 py-3 backdrop-blur-xl">
+              <p className="mono text-2xl text-slate-900">{admitted}</p>
+              <p className="text-xs text-slate-600">Patients admitted</p>
+            </div>
+          </div>
+        }
+      />
+
+      <HospitalExplorer hospitals={hospitals} />
     </main>
   );
 }

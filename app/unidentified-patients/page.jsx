@@ -1,7 +1,12 @@
-import { UserSearch, Building2, CalendarDays, UserRound } from 'lucide-react';
+import { Building2, CalendarDays, Phone, UserRound, UserSearch } from 'lucide-react';
+import Reveal from '../../components/Reveal';
+import ZoomImage from '../../components/ui/ZoomImage';
+import { PageHero, glass } from '../../components/ui/kit';
+import { API_BASE } from '../../lib/api';
 import { imageSrc } from '../../lib/imageUrl';
+import { dateText } from '../../lib/blood';
 
-const API_BASE = (process.env.NEXT_PUBLIC_API_ORIGIN || 'http://localhost:5000') + '/api';
+export const metadata = { title: 'Unidentified patients | Sahayota' };
 
 async function getPatients() {
   try {
@@ -13,59 +18,74 @@ async function getPatients() {
   }
 }
 
-export const metadata = { title: 'Unidentified patients | ResQ' };
-
 export default async function UnidentifiedPatientsPage() {
   const patients = await getPatients();
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-14">
-      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/25">
-        <UserSearch size={24} />
-      </span>
-      <h1 className="mt-4 text-3xl font-semibold text-slate-900">Unidentified patients</h1>
-      <p className="mt-2 max-w-xl text-sm text-slate-600">
-        Patients admitted to hospitals whose identity is not known yet. If you recognise someone,
-        please contact the hospital listed on the card.
-      </p>
+    <main className="mx-auto max-w-6xl px-4 py-8 md:py-12">
+      <PageHero
+        icon={<UserSearch size={24} />}
+        tone="indigo"
+        eyebrow="Someone may be waiting for you"
+        title="Unidentified patients"
+        subtitle="These patients are in hospital and their names are not known. If you recognise someone, call the hospital shown on the card."
+      />
 
       {patients.length === 0 ? (
-        <div className="mt-8 rounded-2xl border border-white/50 bg-white/40 p-10 text-center text-sm text-slate-600 backdrop-blur-xl">
-          No unidentified patients right now.
-        </div>
+        <div className={`${glass} mt-8 p-12 text-center text-sm text-slate-600`}>No unidentified patients right now.</div>
       ) : (
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {patients.map((p) => (
-            <div key={p._id} className="rounded-2xl border border-white/50 bg-white/50 p-5 shadow-md shadow-slate-900/5 backdrop-blur-xl">
-              <div className="mb-4 aspect-[4/3] w-full overflow-hidden rounded-xl border border-slate-200/70 bg-slate-100">
-                {p.photoUrl ? (
-                 <img src={imageSrc(p.photoUrl)} alt="Patient" className="h-full w-full object-cover" />
-                ) : (
-                  <div className="flex h-full items-center justify-center text-slate-400"><UserRound size={40} /></div>
-                )}
-              </div>
+          {patients.map((p, i) => {
+            // eslint-disable-next-line react-hooks/purity
+            const days = p.admissionDate ? Math.max(0, Math.floor((Date.now() - new Date(p.admissionDate).getTime()) / 86400000)) : null;
+            return (
+              <Reveal key={p._id} delay={(i % 3) * 0.07} className="h-full">
+                <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-white/60 bg-white/60 shadow-md shadow-slate-900/5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-slate-900/10">
+                  <div className="relative h-56 overflow-hidden bg-slate-100">
+                    {p.photoUrl ? (
+                      <ZoomImage src={imageSrc(p.photoUrl)} alt="Patient" className="absolute inset-0 h-full w-full" />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-slate-300"><UserRound size={56} /></div>
+                    )}
+                    {days !== null && (
+                      <span className="pointer-events-none absolute bottom-3 left-3 rounded-full bg-slate-950/70 px-3 py-1 text-xs font-medium text-white backdrop-blur">
+                        {days === 0 ? 'Admitted today' : `Admitted ${days} ${days === 1 ? 'day' : 'days'} ago`}
+                      </span>
+                    )}
+                  </div>
 
-              <p className="text-base font-semibold text-slate-900">
-                {p.estimatedAge ? `About ${p.estimatedAge} years old` : 'Age unknown'}
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-slate-600">{p.physicalDescription}</p>
+                  <div className="flex flex-1 flex-col gap-3 p-5">
+                    <p className="text-lg font-semibold text-slate-900">
+                      {p.estimatedAge ? `About ${p.estimatedAge} years old` : 'Age unknown'}
+                    </p>
+                    <p className="text-sm leading-relaxed text-slate-600">{p.physicalDescription}</p>
 
-              <div className="mt-4 space-y-1.5 border-t border-slate-200/70 pt-3 text-xs text-slate-600">
-                <p className="flex items-start gap-1.5">
-                  <Building2 size={13} className="mt-0.5 shrink-0" />
-                  <span>
-                    {p.admittingHospital?.name}
-                    {p.admittingHospital?.address ? `, ${p.admittingHospital.address}` : ''}
-                    {p.admittingHospital?.phone ? ` · ${p.admittingHospital.phone}` : ''}
-                  </span>
-                </p>
-                <p className="mono flex items-center gap-1.5">
-                  <CalendarDays size={13} />
-                  Admitted: {p.admissionDate ? new Date(p.admissionDate).toLocaleDateString() : ''}
-                </p>
-              </div>
-            </div>
-          ))}
+                    <div className="mt-auto space-y-2 border-t border-slate-200/70 pt-4 text-xs text-slate-600">
+                      <p className="flex items-start gap-2">
+                        <Building2 size={14} className="mt-0.5 shrink-0" />
+                        <span>
+                          <span className="font-medium text-slate-900">{p.admittingHospital?.name}</span>
+                          {p.admittingHospital?.address ? `, ${p.admittingHospital.address}` : ''}
+                        </span>
+                      </p>
+                      {p.admissionDate && (
+                        <p className="mono flex items-center gap-2"><CalendarDays size={14} /> {dateText(p.admissionDate)}</p>
+                      )}
+                    </div>
+
+                    {p.admittingHospital?.phone && (
+                      <a
+                        href={`tel:${p.admittingHospital.phone}`}
+                        className="flex items-center justify-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-slate-800"
+                      >
+                        <Phone size={15} /> Call {p.admittingHospital.phone}
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </Reveal>
+            );
+          })}
         </div>
       )}
     </main>
