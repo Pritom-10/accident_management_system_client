@@ -8,9 +8,11 @@ import toast from 'react-hot-toast';
 import {
   Building2, ChevronDown, ClipboardList, Droplet, HeartHandshake, LayoutDashboard, LogIn, LogOut,
   MapPinned, Menu, PenLine, Phone, Receipt, ShieldCheck, Siren, UserPlus, UserRound, UserSearch, X,
-  BellRing, HeartPulse,
+  BellRing, HeartPulse, Bell,
+
 } from 'lucide-react';
 import Logo from './Logo';
+import { detachDevice } from '../lib/push';
 import { useAuth } from './AuthProvider';
 import { imageSrc } from '../lib/imageUrl';
 
@@ -45,7 +47,7 @@ const quickLinks = [
   { title: 'Report an accident', desc: 'No account needed', href: '/report', icon: PenLine, tone: 'bg-amber-100 text-amber-600' },
   { title: 'Accident map', desc: 'Blackspots and heatmap', href: '/map', icon: MapPinned, tone: 'bg-violet-100 text-violet-600' },
   { title: 'Find blood donors', desc: 'By group and area', href: '/blood/donors', icon: Droplet, tone: 'bg-rose-100 text-rose-600' },
-  { title: 'Start a campaign', desc: 'Raise money for treatment', href: '/donate/start', icon: HeartHandshake, tone: 'bg-emerald-100 text-emerald-600' },
+    { title: 'Alerts on your phone', desc: 'SOS, blood and breaking news', href: '/notifications', icon: Bell, tone: 'bg-violet-100 text-violet-600' },
 ];
 
 const exploreRoots = ['/hospitals', '/unidentified-patients', '/map', '/report', '/sos', '/first-aid'];
@@ -118,6 +120,7 @@ export default function Navbar() {
   const accountItems = user
     ? [
         { label: 'My profile', href: '/profile', icon: UserRound },
+        { label: 'Alert settings', href: '/notifications', icon: Bell },
         { label: 'Blood activity', href: '/blood/mine', icon: ClipboardList },
         { label: user.donor?.isDonor ? 'Donor profile' : 'Become a donor', href: '/blood/donor', icon: Droplet },
         { label: 'Campaigns and donations', href: '/donate/mine', icon: Receipt },
@@ -167,7 +170,8 @@ export default function Navbar() {
     };
   }, [mobileOpen]);
 
-  function handleLogout() {
+  async function handleLogout() {
+    await detachDevice();
     logout();
     setAccountOpen(false);
     setMobileOpen(false);

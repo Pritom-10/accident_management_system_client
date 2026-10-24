@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Check, X, BadgeCheck, Trash2, Pencil, Plus, ExternalLink } from 'lucide-react';
+import { Check, X, BadgeCheck, Trash2, Pencil, Plus, ExternalLink,BellRing } from 'lucide-react';
 import { useAdminData, adminAction, useRunner } from '../../lib/useAdminData';
 import { API_BASE, apiFetch } from '../../lib/api';
 import { imageSrc } from '../../lib/imageUrl';
@@ -19,8 +19,14 @@ export default function NewsTab() {
   const { data, loading, reload } = useAdminData(`/news?status=${filter}`);
   const { busyId, run } = useRunner(reload);
 
-  const approve = (p, verified) =>
-    run(p._id, () => adminAction('PATCH', `/news/${p._id}/approve`, { verified }), 'Published');
+    const approve = (p, verified, breaking = false) =>
+    run(
+      p._id,
+      () => adminAction('PATCH', `/news/${p._id}/approve`, { verified, breaking }),
+      breaking ? 'Published and alert sent' : 'Published'
+    );
+
+  const alertNow = (p) => run(p._id, () => adminAction('POST', `/news/${p._id}/alert`), 'Alert sent');
 
   const setVerified = (p, verified) =>
     run(p._id, () => adminAction('PATCH', `/news/${p._id}/verify`, { verified }), verified ? 'Marked as verified' : 'Marked as unverified');
@@ -131,6 +137,9 @@ export default function NewsTab() {
                       <button disabled={busy} onClick={() => approve(p, false)} className={btnGray}>
                         <Check size={14} /> Approve (unverified)
                       </button>
+                      <button disabled={busy} onClick={() => approve(p, true, true)} className={btnRed}>
+                        <BellRing size={14} /> Approve, verify &amp; alert
+                      </button>
                     </>
                   )}
 
@@ -140,6 +149,11 @@ export default function NewsTab() {
                       <button disabled={busy} onClick={() => setVerified(p, !p.isVerified)} className={btnGray}>
                         {p.isVerified ? 'Mark unverified' : 'Mark verified'}
                       </button>
+                      {!p.pushedAt && (
+                        <button disabled={busy} onClick={() => alertNow(p)} className={btnRed}>
+                          <BellRing size={14} /> Send alert
+                        </button>
+                      )}
                     </>
                   )}
 

@@ -42,6 +42,7 @@ export default function NewsForm({ post = null, isAdmin = false }) {
     sourceName: post?.sourceName || '',
     sourceUrl: post?.sourceUrl || '',
     isVerified: post ? Boolean(post.isVerified) : true, 
+    breaking: false,
   }));
   const [photos, setPhotos] = useState(post?.photos || []);
   const [saving, setSaving] = useState(false);
@@ -73,6 +74,7 @@ export default function NewsForm({ post = null, isAdmin = false }) {
         sourceName: f.sourceName,
         sourceUrl: f.sourceUrl,
         isVerified: isAdmin ? f.isVerified : undefined,
+        breaking: isAdmin && !editing ? f.breaking : undefined,
       };
 
       const res = await apiFetch(editing ? `${API_BASE}/news/${post._id}` : `${API_BASE}/news`, {
@@ -240,6 +242,23 @@ export default function NewsForm({ post = null, isAdmin = false }) {
           <span>
             <span className="font-medium text-slate-900">Mark as verified</span>
             <span className="mt-0.5 block text-xs text-slate-600">Tick this only if the facts have been confirmed.</span>
+          </span>
+        </label>
+      )}
+
+            {isAdmin && !editing && (
+        <label className="flex items-start gap-3 rounded-xl bg-rose-50/70 p-4 text-sm text-slate-700">
+          <input
+            type="checkbox"
+            checked={f.breaking}
+            onChange={(e) => setF({ ...f, breaking: e.target.checked })}
+            className="mt-0.5 h-4 w-4 shrink-0 accent-rose-600"
+          />
+          <span>
+            <span className="font-medium text-slate-900">Send a push alert (breaking news)</span>
+            <span className="mt-0.5 block text-xs text-slate-600">
+              People who turned on breaking news alerts for this district will get a notification. Use it only for important news.
+            </span>
           </span>
         </label>
       )}

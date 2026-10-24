@@ -100,9 +100,10 @@ function RequestForm() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'Could not post the request');
 
+            const reached = Math.max(data.emailed || 0, data.pushed || 0);
       toast.success(
-        data.emailed > 0
-          ? `Request posted. ${data.emailed} nearby ${data.emailed === 1 ? 'donor was' : 'donors were'} emailed.`
+        reached > 0
+          ? `Request posted. About ${reached} nearby ${reached === 1 ? 'donor was' : 'donors were'} alerted.`
           : 'Request posted'
       );
       router.push(`/blood/requests/${data.id}`);
