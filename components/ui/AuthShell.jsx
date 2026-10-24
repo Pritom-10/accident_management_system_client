@@ -27,7 +27,7 @@ export default function AuthShell({ icon, iconTone = 'bg-indigo-600 shadow-indig
         <div className="relative flex items-center gap-2.5">
           <Logo size={34} showText={false} />
           <span className="text-xl font-semibold tracking-tight text-white" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-            ResQ
+            Sahayota
           </span>
         </div>
 
