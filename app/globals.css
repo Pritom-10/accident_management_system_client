@@ -92,3 +92,13 @@ h1, h2, h3 {
     animation: none;
   }
 }
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  section {
+    break-inside: avoid;
+  }
+}

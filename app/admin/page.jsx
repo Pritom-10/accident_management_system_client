@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Coins, Droplet, FileWarning, HeartHandshake, History, Lock, Newspaper, ShieldCheck, Siren, UserSearch, Users } from 'lucide-react';
+import { Coins, Droplet, FileWarning,LayoutDashboard, HeartHandshake, History, Lock, Newspaper, ShieldCheck, Siren, UserSearch, Users } from 'lucide-react';
 import { useAuth } from '../../components/AuthProvider';
 import { useAdminData } from '../../lib/useAdminData';
 import SosTab from '../../components/admin/SosTab';
@@ -15,8 +15,10 @@ import VolunteersTab from '../../components/admin/VolunteersTab';
 import PatientsTab from '../../components/admin/PatientsTab';
 import UsersTab from '../../components/admin/UsersTab';
 import ActivityTab from '../../components/admin/ActivityTab';
+import OverviewTab from '../../components/admin/OverviewTab';
 
 const views = {
+  overview: OverviewTab,
   sos: SosTab,
   reports: ReportsTab,
   patients: PatientsTab,
@@ -75,7 +77,7 @@ function NavButton({ item, row, active, onSelect }) {
 }
 
 function AdminPanel() {
-  const [tab, setTab] = useState('sos');
+  const [tab, setTab] = useState('overview');
   const { data: stats, reload } = useAdminData('/stats');
 
   useEffect(() => {
@@ -84,6 +86,7 @@ function AdminPanel() {
 
   const groups = useMemo(
     () => [
+            { title: 'Dashboard', items: [{ id: 'overview', label: 'Overview', icon: LayoutDashboard }] },
       {
         title: 'Emergency',
         items: [
@@ -143,7 +146,7 @@ function AdminPanel() {
       </motion.div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[16rem_1fr]">
-        <aside className="hidden lg:block">
+          <aside className="no-print hidden lg:block">
           <div className="sticky top-24 space-y-5 rounded-3xl border border-white/60 bg-white/60 p-3 shadow-md shadow-slate-900/5 backdrop-blur-xl">
             {groups.map((g) => (
               <div key={g.title}>
@@ -159,7 +162,7 @@ function AdminPanel() {
         </aside>
 
         <div className="min-w-0">
-          <div className="no-scrollbar -mx-4 overflow-x-auto px-4 lg:hidden">
+            <div className="no-print no-scrollbar -mx-4 overflow-x-auto px-4 lg:hidden">
             <div className="flex w-max gap-1 rounded-3xl border border-white/60 bg-white/70 p-1.5 backdrop-blur-xl">
               {flat.map((item) => (
                 <NavButton key={item.id} item={item} active={tab === item.id} onSelect={setTab} />
@@ -176,7 +179,7 @@ function AdminPanel() {
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.2 }}
               >
-                <View />
+              <View onNavigate={setTab} stats={stats} />
               </motion.div>
             </AnimatePresence>
           </div>
