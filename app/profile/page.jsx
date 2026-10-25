@@ -3,9 +3,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+
 import toast from 'react-hot-toast';
 import { Bell, CheckCircle2, Circle, Droplet, HeartHandshake, KeyRound, Lock, Save, UserRound } from 'lucide-react';
-import { API_BASE, apiFetch } from '../../lib/api';
+import { API_BASE, apiFetch, saveToken } from '../../lib/api';
+import PrivacyPanel from '../../components/profile/PrivacyPanel';
 import { bdLocations } from '../../lib/bdLocations';
 import { imageSrc } from '../../lib/imageUrl';
 import { useAuth } from '../../components/AuthProvider';
@@ -129,7 +131,7 @@ export default function ProfilePage() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'Could not change the password');
-
+      if (data.token) saveToken(data.token);
       toast.success('Password changed');
       setPw({ currentPassword: '', newPassword: '' });
     } catch (err) {
@@ -301,6 +303,7 @@ export default function ProfilePage() {
           </SubmitButton>
         </SectionCard>
       </form>
+      <PrivacyPanel />
     </main>
   );
 }
