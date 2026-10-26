@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { usePwa } from '../../components/pwa/PwaProvider';
+import InstallCard from '../../components/pwa/InstallCard';
 import { AnimatePresence, motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { BellOff, BellRing, Droplet, HeartHandshake, Loader2, Lock, Mail, Newspaper, Send, Siren } from 'lucide-react';
@@ -71,6 +73,7 @@ function Row({ icon: Icon, tone, title, desc, note, children }) {
 
 export default function NotificationsPage() {
   const { user, loading } = useAuth();
+  const { ios, standalone } = usePwa();
   const [support, setSupport] = useState('checking');
   const [permission, setPermission] = useState('default');
   const [device, setDevice] = useState(null);
@@ -248,8 +251,10 @@ export default function NotificationsPage() {
               {support === 'checking' ? 'Checking this device...' : on ? 'Alerts are on for this device' : 'Alerts are off for this device'}
             </p>
             <p className="mt-0.5 text-sm text-slate-600">
-              {support === 'unsupported'
-                ? 'This browser cannot show push alerts. iPhone is not supported yet. Android and computers work.'
+                  {support === 'unsupported'
+                ? ios && !standalone
+                  ? 'On iPhone, alerts work only after you add Sahayota to your Home Screen. Follow the steps below.'
+                  : 'This browser cannot show push alerts. Try Chrome, Edge or Firefox.'
                 : permission === 'denied'
                   ? 'Alerts are blocked for this site. Click the lock icon in the address bar, allow Notifications, then reload.'
                   : on
@@ -301,6 +306,9 @@ export default function NotificationsPage() {
       </motion.section>
 
       <AnimatePresence>
+        <div className="mt-6">
+        <InstallCard />
+      </div>
         {on && (
           <motion.section
             key="topics"

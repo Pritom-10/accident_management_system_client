@@ -14,6 +14,7 @@ import { useLocate } from '../../lib/useLocate';
 import { useAuth } from '../../components/AuthProvider';
 import LocationPicker from '../../components/map/LocationPicker';
 import Radar from '../../components/sos/Radar';
+import ShareLocation from '../../components/sos/ShareLocation';
 
 const field =
   'w-full rounded-xl border border-slate-200 bg-white/80 px-3 py-2.5 text-sm text-slate-700 disabled:cursor-not-allowed disabled:opacity-60';
@@ -94,7 +95,7 @@ export default function SosPage() {
       router.push(`/sos/status/${data.token}`);
     } catch (err) {
       setSending(false);
-      setFailed(err.message);
+      setFailed(typeof navigator !== 'undefined' && navigator.onLine === false ? 'You have no internet right now.' : err.message);
     }
   }
   // eslint-disable-next-line react-hooks/refs
@@ -206,6 +207,7 @@ export default function SosPage() {
             <a href="tel:999" className="mt-3 inline-flex items-center gap-2 rounded-full bg-rose-600 px-5 py-2.5 text-sm font-semibold text-white">
               <Phone size={15} /> Call 999
             </a>
+            <ShareLocation pos={pos} />
           </motion.div>
         )}
       </AnimatePresence>
