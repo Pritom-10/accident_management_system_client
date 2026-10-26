@@ -5,7 +5,8 @@ import AccidentFilters from '../../components/AccidentFilters';
 import Pagination from '../../components/Pagination';
 import MapView from '../../components/map/MapView';
 import Reveal from '../../components/Reveal';
-import { PageHero, glass } from '../../components/ui/kit';
+import { PageHero } from '../../components/ui/kit'; 
+import { glass } from '../../components/ui/styles';
 import { API_BASE } from '../../lib/api';
 
 const FILTER_KEYS = ['division', 'district', 'area', 'status'];

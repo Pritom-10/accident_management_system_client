@@ -5,7 +5,8 @@ import NewsFilters from '../../components/NewsFilters';
 import Pagination from '../../components/Pagination';
 import WriteNewsLinks from '../../components/WriteNewsLinks';
 import Reveal from '../../components/Reveal';
-import { PageHero, glass } from '../../components/ui/kit';
+import { PageHero } from '../../components/ui/kit';
+import { glass } from '../../components/ui/styles';
 import { API_BASE } from '../../lib/api';
 
 const PAGE_SIZE = 9;

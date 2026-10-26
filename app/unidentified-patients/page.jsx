@@ -1,7 +1,8 @@
 import { Building2, CalendarDays, Phone, UserRound, UserSearch } from 'lucide-react';
 import Reveal from '../../components/Reveal';
 import ZoomImage from '../../components/ui/ZoomImage';
-import { PageHero, glass } from '../../components/ui/kit';
+import { PageHero } from '../../components/ui/kit';
+import { glass } from '../../components/ui/styles';
 import { API_BASE } from '../../lib/api';
 import { imageSrc } from '../../lib/imageUrl';
 import { dateText } from '../../lib/blood';
