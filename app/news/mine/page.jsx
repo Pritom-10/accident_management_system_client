@@ -13,8 +13,9 @@ const statusStyle = {
   pending: 'bg-amber-100 text-amber-700',
   published: 'bg-emerald-100 text-emerald-700',
   rejected: 'bg-rose-100 text-rose-700',
+  merged: 'bg-slate-200 text-slate-600',
 };
-const statusText = { pending: 'Waiting for review', published: 'Published', rejected: 'Not approved' };
+const statusText = { pending: 'Waiting for review', published: 'Published', rejected: 'Not approved',  merged: 'Merged into another story', };
 
 function MyPosts() {
   const [posts, setPosts] = useState(null);

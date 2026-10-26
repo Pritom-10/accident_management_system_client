@@ -187,6 +187,7 @@ export default function OverviewTab({ onNavigate, stats = {} }) {
     ['News waiting', stats.pendingNews, 'news'],
     ['Campaigns to check', (stats.pendingCampaigns || 0) + (stats.flaggedCampaigns || 0), 'campaigns'],
     ['Volunteers waiting', stats.pendingVolunteers, 'volunteers'],
+    ['Comments to review', stats.reportedComments, 'comments'],
     ['Patients to verify', stats.pendingPatients, 'patients'],
   ].filter((a) => a[1] > 0);
 

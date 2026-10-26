@@ -2,16 +2,27 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Check, X, BadgeCheck, Trash2, Pencil, Plus, ExternalLink,BellRing } from 'lucide-react';
+import { BadgeCheck, BellRing, Check, ExternalLink, GitMerge, Pencil, Plus, Trash2, X } from 'lucide-react';
 import { useAdminData, adminAction, useRunner } from '../../lib/useAdminData';
 import { API_BASE, apiFetch } from '../../lib/api';
 import { imageSrc } from '../../lib/imageUrl';
 import { formatDateTime } from '../../lib/newsOptions';
-import {
-  Pills, EmptyBox, Loading, RejectBox, cardClass, btnGreen, btnRed, btnGray,
-} from './shared';
+import { kindMeta } from '../../lib/newsExtras';
+import { dateText } from '../../lib/blood';
+import { Pills, EmptyBox, Loading, RejectBox, cardClass, btnGreen, btnRed, btnGray } from './shared';
 
-const filters = [['pending', 'Pending'], ['published', 'Published'], ['rejected', 'Rejected']];
+const filters = [
+  ['pending', 'Pending'],
+  ['published', 'Published'],
+  ['updates', 'Updates to approve'],
+  ['rejected', 'Rejected'],
+];
+
+async function callNews(method, path) {
+  const res = await apiFetch(`${API_BASE}/news${path}`, { method });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || 'Could not do that');
+}
 
 export default function NewsTab() {
   const [filter, setFilter] = useState('pending');
@@ -19,17 +30,17 @@ export default function NewsTab() {
   const { data, loading, reload } = useAdminData(`/news?status=${filter}`);
   const { busyId, run } = useRunner(reload);
 
-    const approve = (p, verified, breaking = false) =>
+  const approve = (p, verified, breaking = false) =>
     run(
       p._id,
       () => adminAction('PATCH', `/news/${p._id}/approve`, { verified, breaking }),
       breaking ? 'Published and alert sent' : 'Published'
     );
 
-  const alertNow = (p) => run(p._id, () => adminAction('POST', `/news/${p._id}/alert`), 'Alert sent');
-
   const setVerified = (p, verified) =>
     run(p._id, () => adminAction('PATCH', `/news/${p._id}/verify`, { verified }), verified ? 'Marked as verified' : 'Marked as unverified');
+
+  const alertNow = (p) => run(p._id, () => adminAction('POST', `/news/${p._id}/alert`), 'Alert sent');
 
   async function reject(p, reason) {
     const ok = await run(
@@ -42,37 +53,41 @@ export default function NewsTab() {
 
   function remove(p) {
     if (!window.confirm(`Delete "${p.title}" permanently?`)) return;
-    run(
-      p._id,
-      async () => {
-        const res = await apiFetch(`${API_BASE}/news/${p._id}`, { method: 'DELETE' });
-        const json = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(json.error || 'Could not delete');
-      },
-      'Deleted'
-    );
+    run(p._id, () => callNews('DELETE', `/${p._id}`), 'Deleted');
+  }
+
+  function mergeInto(keepId, dropId, title, busyKey) {
+    if (!window.confirm(`Merge "${title}"? This cannot be undone.`)) return;
+    run(busyKey, () => adminAction('POST', `/news/${keepId}/merge`, { duplicateId: dropId }), 'Stories merged');
+  }
+
+  const approveUpdate = (p, u) =>
+    run(u._id, () => adminAction('PATCH', `/news/${p._id}/updates/${u._id}/approve`), 'Update is now live');
+
+  function removeUpdate(p, u) {
+    if (!window.confirm('Remove this update?')) return;
+    run(u._id, () => callNews('DELETE', `/${p._id}/updates/${u._id}`), 'Update removed');
   }
 
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Pills options={filters} value={filter} onChange={(f) => { setFilter(f); setRejecting(null); }} />
-        <Link
-          href="/news/write"
-          className="flex items-center gap-2 rounded-full bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-        >
+        <Link href="/news/write" className="flex items-center gap-2 rounded-full bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700">
           <Plus size={16} /> Write news
         </Link>
       </div>
 
-      {loading ? (
+      {loading && data.length === 0 ? (
         <Loading />
       ) : data.length === 0 ? (
-        <EmptyBox text={`No ${filter} news.`} />
+        <EmptyBox text={filter === 'updates' ? 'No updates are waiting.' : `No ${filter} news.`} />
       ) : (
         <div className="space-y-4">
           {data.map((p) => {
             const busy = busyId === p._id;
+            const waiting = (p.updates || []).filter((u) => !u.approved);
+
             return (
               <div key={p._id} className={cardClass}>
                 <div className="flex flex-wrap items-center gap-2">
@@ -88,12 +103,69 @@ export default function NewsTab() {
                 </div>
 
                 <p className="mono mt-1 text-xs text-slate-500">
-                  By {p.authorName || 'unknown'} · {[p.location?.area, p.location?.district].filter(Boolean).join(', ')} ·{' '}
-                  {formatDateTime(p.occurredAt)}
+                  By {p.authorName || 'unknown'} · {[p.location?.area, p.location?.district].filter(Boolean).join(', ')} · {formatDateTime(p.occurredAt)}
                 </p>
                 <p className="mt-1 text-xs text-slate-600">
                   {p.deaths} dead · {p.injured} injured{p.road ? ` · ${p.road}` : ''}
                 </p>
+
+                {p.similar && p.similar.length > 0 && (
+                  <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                    <p className="flex items-center gap-2 text-sm font-semibold text-amber-900">
+                      <GitMerge size={15} /> This may be the same accident as another story
+                    </p>
+                    <ul className="mt-3 space-y-3">
+                      {p.similar.map((s) => (
+                        <li key={s.id} className="rounded-lg bg-white/80 p-3">
+                          <p className="text-sm font-medium text-slate-900">{s.title}</p>
+                          <p className="mt-0.5 text-xs text-slate-600">
+                            {s.status === 'published' ? 'Published' : 'Waiting'} · {s.score}% match · {s.reasons.join(' · ')}
+                          </p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            <button disabled={busy} onClick={() => mergeInto(p._id, s.id, s.title, p._id)} className={btnGray}>
+                              Keep this story, merge the other into it
+                            </button>
+                            <button disabled={busy} onClick={() => mergeInto(s.id, p._id, p.title, p._id)} className={btnGray}>
+                              Keep the other, merge this into it
+                            </button>
+                            <Link href={`/news/${s.id}`} className={btnGray}><ExternalLink size={14} /> Open it</Link>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {waiting.length > 0 && (
+                  <div className="mt-3 rounded-xl border border-indigo-200 bg-indigo-50 p-4">
+                    <p className="text-sm font-semibold text-indigo-900">
+                      {waiting.length} {waiting.length === 1 ? 'update is' : 'updates are'} waiting
+                    </p>
+                    <ul className="mt-3 space-y-3">
+                      {waiting.map((u) => (
+                        <li key={u._id} className="rounded-lg bg-white/80 p-3">
+                          <p className="text-xs font-semibold text-slate-700">
+                            {kindMeta(u.kind).label} · {dateText(u.at)} · by {u.authorName || 'unknown'}
+                          </p>
+                          <p className="mt-1 whitespace-pre-line text-sm text-slate-800">{u.text}</p>
+                          {(Number.isInteger(u.deaths) || Number.isInteger(u.injured)) && (
+                            <p className="mt-1 text-xs text-slate-600">
+                              Sets the numbers to {Number.isInteger(u.deaths) ? `${u.deaths} dead` : 'dead unchanged'}, {Number.isInteger(u.injured) ? `${u.injured} injured` : 'injured unchanged'}
+                            </p>
+                          )}
+                          <div className="mt-2 flex gap-2">
+                            <button disabled={busyId === u._id} onClick={() => approveUpdate(p, u)} className={btnGreen}>
+                              <Check size={14} /> Approve
+                            </button>
+                            <button disabled={busyId === u._id} onClick={() => removeUpdate(p, u)} className={btnRed}>
+                              <Trash2 size={14} /> Remove
+                            </button>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
                 <details className="mt-3 rounded-xl bg-white/60 p-3 text-sm text-slate-700">
                   <summary className="cursor-pointer text-xs font-medium text-slate-900">Read the full story</summary>

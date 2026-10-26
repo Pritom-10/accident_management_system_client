@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { BadgeCheck, Clock, MapPin } from 'lucide-react';
+import { BadgeCheck, Clock, History, MapPin } from 'lucide-react';
 import { imageSrc } from '../lib/imageUrl';
 import { formatDateTime, vehicleLabel } from '../lib/newsOptions';
+
 
 export default function NewsCard({ post }) {
   const photo = post.photos?.[0];
@@ -16,7 +17,11 @@ export default function NewsCard({ post }) {
         {photo && (
           <img src={imageSrc(photo)} alt="" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent" />
+               {post.updateCount > 0 && (
+          <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-indigo-600 px-3 py-1 text-xs font-medium text-white shadow-lg">
+            <History size={12} /> {post.updateCount} {post.updateCount === 1 ? 'update' : 'updates'}
+          </span>
+        )}
 
         <div className="absolute left-3 top-3 flex flex-wrap gap-2">
           {post.isVerified ? (

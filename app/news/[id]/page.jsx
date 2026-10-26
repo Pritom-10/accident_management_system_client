@@ -1,9 +1,12 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { ArrowLeft, BadgeCheck, Car, Clock, ExternalLink, MapPin, Route } from 'lucide-react';
+import { notFound, redirect } from 'next/navigation';
+import { ArrowLeft, BadgeCheck, Car, Clock, ExternalLink, MapPin, Newspaper, Route } from 'lucide-react';
 import ZoomImage from '../../../components/ui/ZoomImage';
 import ShareButton from '../../../components/ui/ShareButton';
-import { glass } from '../../../components/ui/kit';
+import UpdatesTimeline from '../../../components/news/UpdatesTimeline';
+import NewsEngage from '../../../components/news/NewsEngage';
+import WriterTools from '../../../components/news/WriterTools';
+import { glass } from '../../../components/ui/styles';
 import { API_BASE } from '../../../lib/api';
 import { imageSrc } from '../../../lib/imageUrl';
 import { formatDateTime, vehicleLabel, youtubeId } from '../../../lib/newsOptions';
@@ -25,6 +28,8 @@ export default async function NewsDetailPage({ params }) {
 
   if (post === 'missing') notFound();
 
+  if (post && post.merged && post.mergedInto) redirect(`/news/${post.mergedInto}`);
+
   if (!post) {
     return (
       <main className="mx-auto max-w-3xl px-6 py-20 text-center text-sm text-slate-600">
@@ -38,6 +43,7 @@ export default async function NewsDetailPage({ params }) {
   const place = [post.location?.address, post.location?.area, post.location?.district, post.location?.division]
     .filter(Boolean)
     .join(', ');
+  const extra = post.extraSources || [];
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-8 md:py-12">
@@ -53,6 +59,11 @@ export default async function NewsDetailPage({ params }) {
         ) : (
           <span className="rounded-full bg-amber-100 px-3.5 py-1.5 text-xs font-medium text-amber-800">
             Unverified: this report has not been confirmed yet
+          </span>
+        )}
+        {post.updateCount > 0 && (
+          <span className="rounded-full bg-indigo-100 px-3.5 py-1.5 text-xs font-medium text-indigo-700">
+            {post.updateCount} {post.updateCount === 1 ? 'update' : 'updates'}
           </span>
         )}
       </div>
@@ -96,6 +107,8 @@ export default async function NewsDetailPage({ params }) {
         <div className="whitespace-pre-line text-base leading-8 text-slate-700">{post.body}</div>
       </article>
 
+      <UpdatesTimeline updates={post.updates || []} />
+
       {vid ? (
         <div className="mt-6 aspect-video w-full overflow-hidden rounded-[2rem] border border-white/60 shadow-xl shadow-slate-900/10">
           <iframe
@@ -131,12 +144,31 @@ export default async function NewsDetailPage({ params }) {
               <span className="font-medium text-slate-900">{post.sourceName || 'Not given'}</span>
             )}
           </p>
-          <p className="mt-1 text-xs text-slate-500">
-            Posted by {post.authorName || 'ResQ'} on {formatDateTime(post.publishedAt || post.createdAt)}
+
+          {extra.length > 0 && (
+            <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span className="flex items-center gap-1.5 text-xs text-slate-500"><Newspaper size={13} /> Also reported by</span>
+              {extra.map((s) =>
+                s.url ? (
+                  <a key={`${s.name}${s.url}`} href={s.url} target="_blank" rel="noopener noreferrer nofollow" className="text-xs font-medium text-indigo-600 hover:underline">
+                    {s.name || s.url}
+                  </a>
+                ) : (
+                  <span key={s.name} className="text-xs font-medium text-slate-700">{s.name}</span>
+                )
+              )}
+            </p>
+          )}
+
+          <p className="mt-2 text-xs text-slate-500">
+            Posted by {post.authorName || 'Sahayota'} on {formatDateTime(post.publishedAt || post.createdAt)}
           </p>
         </div>
         <ShareButton title={post.title} text={post.title}>Share this story</ShareButton>
       </div>
+
+      <WriterTools newsId={post._id} />
+      <NewsEngage newsId={post._id} />
     </main>
   );
 }
