@@ -27,6 +27,23 @@ async function getCase(caseId) {
   }
 }
 
+export async function generateMetadata({ params }) {
+  const { caseId } = await params;
+  const item = await getCase(caseId);
+  if (!item || item === 'missing') return {};
+
+  const title = `${item.accidentType} in ${[item.location?.area, item.location?.district].filter(Boolean).join(', ')} | Sahayota`;
+  const description = String(item.description).slice(0, 160);
+  const image = item.photoUrl ? [imageSrc(item.photoUrl)] : undefined;
+
+  return {
+    title,
+    description,
+    openGraph: { title, description, type: 'article', images: image },
+    twitter: { card: image ? 'summary_large_image' : 'summary', title, description },
+  };
+}
+
 export default async function AccidentDetailPage({ params }) {
   const { caseId } = await params;
   const item = await getCase(caseId);

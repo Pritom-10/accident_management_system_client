@@ -16,7 +16,7 @@ import DonateModal from '../../../components/donate/DonateModal';
 import ManagePanel from '../../../components/donate/ManagePanel';
 import ReportCampaign from '../../../components/donate/ReportCampaign';
 import { DonorsList, Ledger } from '../../../components/donate/Lists';
-
+import ShareButton from '../../../components/ui/ShareButton';
 const cardClass = 'rounded-2xl border border-white/50 bg-white/50 p-5 shadow-md shadow-slate-900/5 backdrop-blur-xl';
 const SHOWN = ['active', 'completed', 'closed'];
 
@@ -302,12 +302,9 @@ export default function CampaignPage() {
               <HeartHandshake size={18} /> {canDonate ? 'Donate now' : 'Not taking donations'}
             </motion.button>
 
-            <button
-              onClick={share}
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300/70 bg-white/80 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-white"
-            >
-              <Share2 size={16} /> Share
-            </button>
+            <ShareButton title={c.title} text={`Please help: ${c.title}`} className="mt-3 block w-full">
+              Share
+            </ShareButton>
 
             {SHOWN.includes(c.status) && c.status !== 'closed' && (
               <div className="mt-5 border-t border-slate-200/70 pt-4">

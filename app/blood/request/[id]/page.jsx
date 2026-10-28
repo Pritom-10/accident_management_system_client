@@ -9,6 +9,7 @@ import {
   ArrowLeft, Ban, Building2, CalendarClock, CheckCircle2, HeartHandshake, Info, Loader2,
   Lock, MapPin, MessageCircle, Phone, Share2, UserRound, Users, XCircle,
 } from 'lucide-react';
+import ShareButton from '../../../../components/ui/ShareButton';
 import { useAuth } from '../../../../components/AuthProvider';
 import { GroupBadge, Skeleton, StatusBadge, TimeLeft } from '../../../../components/blood/ui';
 import { API_BASE, apiFetch } from '../../../../lib/api';
@@ -386,12 +387,9 @@ export default function BloodRequestDetailPage() {
       )}
 
       <motion.div {...rise(6)} className="mt-6 flex flex-wrap items-center justify-between gap-3">
-        <button
-          onClick={share}
-          className="flex items-center gap-2 rounded-full border border-slate-300/70 bg-white/80 px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-white"
-        >
-          <Share2 size={16} /> Share this request
-        </button>
+          <ShareButton title={`${r.bloodGroup} blood needed`} text={`${r.bloodGroup} blood is needed at ${r.hospital?.name}. Please help.`}>
+          Share this request
+        </ShareButton>
         {canManage && open && (
           <button
             onClick={cancel}

@@ -22,6 +22,23 @@ async function getPost(id) {
   }
 }
 
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  const post = await getPost(id);
+  if (!post || post === 'missing' || post.merged) return {};
+
+  const title = `${post.title} | Sahayota`;
+  const description = post.body.slice(0, 160);
+  const image = post.photos && post.photos[0] ? [imageSrc(post.photos[0])] : undefined;
+
+  return {
+    title,
+    description,
+    openGraph: { title, description, type: 'article', images: image },
+    twitter: { card: image ? 'summary_large_image' : 'summary', title, description },
+  };
+}
+
 export default async function NewsDetailPage({ params }) {
   const { id } = await params;
   const post = await getPost(id);

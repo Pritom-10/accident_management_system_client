@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-
+import EmailPanel from '../../components/profile/EmailPanel';
 import toast from 'react-hot-toast';
 import { Bell, CheckCircle2, Circle, Droplet, HeartHandshake, KeyRound, Lock, Save, UserRound } from 'lucide-react';
 import { API_BASE, apiFetch, saveToken } from '../../lib/api';
@@ -303,6 +303,7 @@ export default function ProfilePage() {
           </SubmitButton>
         </SectionCard>
       </form>
+        <EmailPanel />
       <PrivacyPanel />
     </main>
   );

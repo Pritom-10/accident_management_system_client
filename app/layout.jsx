@@ -10,6 +10,8 @@ import NetworkBanner from '../components/pwa/NetworkBanner';
 import InstallBanner from '../components/pwa/InstallBanner';
 
 export const metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+  openGraph: { siteName: 'Sahayota', type: 'website' },
   title: 'Sahayota | Accident & Emergency Response',
   description: 'Accident news, SOS alerts, blood donors, treatment fundraising and hospital information for Bangladesh.',
   applicationName: 'Sahayota',
