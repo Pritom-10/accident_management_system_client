@@ -9,6 +9,7 @@ import { API_BASE, apiFetch } from '../../lib/api';
 import { QUICK_AMOUNTS, methodMeta, taka } from '../../lib/money';
 import { useAuth } from '../AuthProvider';
 import { Confetti, CopyButton } from './ui';
+import RemindMe from './RemindMe';
 
 const field = 'w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700';
 const label = 'mb-1 block text-sm font-medium text-slate-700';
@@ -378,6 +379,7 @@ export default function DonateModal({ campaign, onClose }) {
                   The family will see your payment in their account and confirm it. Your receipt is ready.
                 </p>
                 <p className="mono mt-4 rounded-xl bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900">{result.receiptNo}</p>
+                <RemindMe campaign={campaign} amount={amountNumber} method={method} />
                 <div className="mt-5 flex flex-wrap justify-center gap-3">
                   <Link
                     href={`/donate/receipt/${result.receiptNo}`}

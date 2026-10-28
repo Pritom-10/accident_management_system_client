@@ -10,6 +10,7 @@ import { formatDateTime } from '../../lib/newsOptions';
 import { toLocalInput } from '../../lib/blood';
 import ImageUpload from '../ImageUpload';
 import { CopyButton, MethodChip, Pill } from './ui';
+import DisputeActions from './DisputeActions';
 
 const field = 'w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700';
 const label = 'mb-1 block text-sm font-medium text-slate-700';
@@ -99,6 +100,7 @@ export default function ManagePanel({ campaign, onChanged }) {
   }
 
   const pending = (rows || []).filter((r) => r.status === 'pending');
+  const complaints = (rows || []).filter((r) => r.dispute && r.dispute.status === 'open');
   const decided = (rows || []).filter((r) => r.status !== 'pending');
   const open = campaign.status === 'active' || campaign.status === 'completed';
   const left = Math.max(0, campaign.raised - campaign.spent);
@@ -113,6 +115,20 @@ export default function ManagePanel({ campaign, onChanged }) {
         <h2 className="text-lg font-semibold text-slate-900">Manage this campaign</h2>
         <p className="mt-1 text-xs text-slate-600">Only you and the admins can see this part.</p>
       </div>
+
+            {complaints.length > 0 && (
+        <div>
+          <p className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+            Complaints from donors
+            <span className="rounded-full bg-rose-600 px-2 py-0.5 text-xs font-semibold text-white">{complaints.length}</span>
+          </p>
+          <div className="mt-3 space-y-3">
+            {complaints.map((d) => (
+              <DisputeActions key={d._id} donation={d} onDone={() => { load(); onChanged(); }} />
+            ))}
+          </div>
+        </div>
+      )}
 
       <div>
         <p className="flex items-center gap-2 text-sm font-semibold text-slate-900">

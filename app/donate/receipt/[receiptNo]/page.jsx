@@ -1,15 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ArrowLeft, CheckCircle2, Clock, Printer, XCircle } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { AlertCircle, ArrowLeft, CheckCircle2, Clock, Loader2, Printer, RotateCcw, Send, XCircle } from 'lucide-react';
 import { API_BASE } from '../../../../lib/api';
 import { donationStatus, methodMeta, taka } from '../../../../lib/money';
 import { formatDateTime } from '../../../../lib/newsOptions';
 import { Skeleton } from '../../../../components/blood/ui';
 import { Pill } from '../../../../components/donate/ui';
+import { reasonText } from '../../../../components/donate/DisputeActions';
+import { fieldClass } from '../../../../components/ui/styles';
 
 function Line({ name, value, mono = false }) {
   return (
@@ -20,12 +23,99 @@ function Line({ name, value, mono = false }) {
   );
 }
 
+function DisputeBox({ receiptNo, status, dispute, onSent }) {
+  const [open, setOpen] = useState(false);
+  const [reason, setReason] = useState(status === 'pending' ? 'not_confirmed' : 'other');
+  const [message, setMessage] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  async function send(e) {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      const res = await fetch(`${API_BASE}/donate/receipts/${receiptNo}/dispute`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason, message }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Could not send your complaint');
+
+      toast.success('Your complaint was sent');
+      setOpen(false);
+      setMessage('');
+      onSent();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const isOpen = dispute && dispute.status === 'open';
+  const closed = dispute && (dispute.status === 'resolved' || dispute.status === 'refunded');
+
+  return (
+    <div className="no-print mt-6 rounded-2xl border border-slate-200 bg-white p-5">
+      {isOpen && (
+        <p className="flex items-start gap-2 rounded-xl bg-amber-50 p-3 text-sm text-amber-900">
+          <AlertCircle size={16} className="mt-0.5 shrink-0" /> Your complaint was sent to the campaign owner. They will answer here.
+        </p>
+      )}
+
+      {closed && (
+        <div className="rounded-xl bg-slate-50 p-3 text-sm text-slate-800">
+          <p className="font-semibold">
+            Your complaint was {dispute.status === 'refunded' ? 'answered with a refund' : 'closed'}
+          </p>
+          {dispute.response && <p className="mt-1 whitespace-pre-line">{dispute.response}</p>}
+        </div>
+      )}
+
+      {!isOpen && status !== 'refunded' && (
+        <>
+          {!open ? (
+            <button onClick={() => setOpen(true)} className="mt-0 text-sm font-medium text-indigo-600 hover:underline">
+              {closed ? 'Still not solved? Send another complaint' : 'Something wrong with this donation?'}
+            </button>
+          ) : (
+            <form onSubmit={send} className="space-y-3">
+              <select value={reason} onChange={(e) => setReason(e.target.value)} className={fieldClass}>
+                {Object.entries(reasonText).map(([value, label]) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
+              </select>
+              <textarea
+                required
+                rows={3}
+                maxLength={500}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Tell the campaign owner what went wrong"
+                className={fieldClass}
+              />
+              <div className="flex gap-2">
+                <button disabled={busy} className="flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60">
+                  {busy ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />} Send
+                </button>
+                <button type="button" onClick={() => setOpen(false)} className="rounded-full border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-700">
+                  Cancel
+                </button>
+              </div>
+            </form>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
 export default function ReceiptPage() {
   const { receiptNo } = useParams();
   const [data, setData] = useState(null);
   const [state, setState] = useState('loading');
 
-  useEffect(() => {
+  const load = useCallback(() => {
     fetch(`${API_BASE}/donate/receipts/${receiptNo}`)
       .then(async (res) => {
         if (res.status === 404) {
@@ -38,6 +128,10 @@ export default function ReceiptPage() {
       })
       .catch(() => setState('failed'));
   }, [receiptNo]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   if (state === 'loading') {
     return (
@@ -66,7 +160,8 @@ export default function ReceiptPage() {
     confirmed: { icon: CheckCircle2, cls: 'bg-emerald-50 text-emerald-800', text: 'Your donation is confirmed. Thank you.' },
     pending: { icon: Clock, cls: 'bg-amber-50 text-amber-800', text: 'Waiting for the family to confirm your payment.' },
     rejected: { icon: XCircle, cls: 'bg-rose-50 text-rose-800', text: `The family could not find this payment${d.rejectionReason ? `: ${d.rejectionReason}` : '.'}` },
-  }[d.status];
+    refunded: { icon: RotateCcw, cls: 'bg-slate-100 text-slate-800', text: 'This donation was refunded to you.' },
+  }[d.status] || { icon: Clock, cls: 'bg-slate-100 text-slate-800', text: '' };
   const Icon = banner.icon;
 
   return (
@@ -103,7 +198,7 @@ export default function ReceiptPage() {
             {d.confirmedAt && <Line name="Confirmed" value={formatDateTime(d.confirmedAt)} />}
             <div className="flex items-center justify-between py-2.5 text-sm">
               <span className="text-slate-500">Status</span>
-              <Pill info={donationStatus[d.status]} />
+              <Pill info={donationStatus[d.status] || donationStatus.pending} />
             </div>
           </div>
 
@@ -112,6 +207,8 @@ export default function ReceiptPage() {
           </p>
         </div>
       </motion.div>
+
+      <DisputeBox receiptNo={d.receiptNo} status={d.status} dispute={d.dispute} onSent={load} />
 
       <div className="no-print mt-6 flex justify-center">
         <button

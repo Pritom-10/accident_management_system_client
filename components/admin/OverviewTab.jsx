@@ -189,6 +189,7 @@ export default function OverviewTab({ onNavigate, stats = {} }) {
     ['Volunteers waiting', stats.pendingVolunteers, 'volunteers'],
     ['Comments to review', stats.reportedComments, 'comments'],
     ['Patients to verify', stats.pendingPatients, 'patients'],
+    ['Donor complaints', stats.openDisputes, 'disputes'],
   ].filter((a) => a[1] > 0);
 
   return (
