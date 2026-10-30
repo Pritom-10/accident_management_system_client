@@ -11,6 +11,7 @@ import { imageSrc } from '../../lib/imageUrl';
 import { timeAgo } from '../../lib/sos';
 import { useAuth } from '../AuthProvider';
 import { glass } from '../ui/styles';
+import VerifiedMark from '../ui/VerifiedMark';
 
 const MAX = 800;
 const REASONS = ['Spam', 'Abusive or hateful', 'False information', 'Other'];
@@ -238,7 +239,9 @@ export default function NewsEngage({ newsId }) {
                   <Avatar name={c.name} photoUrl={c.photoUrl} />
                   <div className="min-w-0 flex-1">
                     <p className="flex flex-wrap items-center gap-x-2 text-sm">
-                      <span className="font-semibold text-slate-900">{c.name}</span>
+                    <span className="flex items-center gap-1 font-semibold text-slate-900">
+                        {c.name} {c.verified && <VerifiedMark size={14} />}
+                      </span>
                       {c.mine && <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[10px] font-medium text-indigo-700">You</span>}
                       <span className="text-xs text-slate-500">{timeAgo(c.createdAt)}</span>
                     </p>

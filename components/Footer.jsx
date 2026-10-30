@@ -12,6 +12,7 @@ const columns = [
       ['Report an accident', '/report'],
       ['Hospitals and numbers', '/hospitals'],
       ['Unidentified patients', '/unidentified-patients'],
+      ['Legal help and counseling', '/help'],
     ],
   },
   {

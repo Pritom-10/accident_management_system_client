@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Coins, Droplet, FileWarning,MessageSquare,LayoutDashboard, HeartHandshake, History, Lock, Newspaper, ShieldCheck, Siren, UserSearch, Users, Scale,Building2 } from 'lucide-react';
+import { Coins, Droplet, FileWarning,MessageSquare,LayoutDashboard, HeartHandshake, History, Lock, Newspaper, ShieldCheck, Siren, UserSearch, Users, Scale,Building2, BadgeCheck } from 'lucide-react';
 import { useAuth } from '../../components/AuthProvider';
 import { useAdminData } from '../../lib/useAdminData';
 import SosTab from '../../components/admin/SosTab';
@@ -19,6 +19,8 @@ import OverviewTab from '../../components/admin/OverviewTab';
 import CommentsTab from '../../components/admin/CommentsTab';
 import DisputesTab from '../../components/admin/DisputesTab';
 import HospitalsTab from '../../components/admin/HospitalsTab';
+import VerificationsTab from '../../components/admin/VerificationsTab';
+import HelpOrgsTab from '../../components/admin/HelpOrgsTab';
 
 const views = {
   overview: OverviewTab,
@@ -34,6 +36,8 @@ const views = {
   comments: CommentsTab,
   disputes: DisputesTab,
   hospitals: HospitalsTab,
+  verifications: VerificationsTab,
+  helporgs: HelpOrgsTab
 };
 
 function Notice({ icon, title, text, children }) {
@@ -110,6 +114,7 @@ function AdminPanel() {
           { id: 'hospitals', label: 'Hospitals', icon: Building2 },
           { id: 'disputes', label: 'Disputes', icon: Scale, badge: stats.openDisputes },
           { id: 'comments', label: 'Comments', icon: MessageSquare, badge: stats.reportedComments },
+          { id: 'helporgs', label: 'Help groups', icon: Scale },
         ],
       },
       {
@@ -117,6 +122,7 @@ function AdminPanel() {
         items: [
           { id: 'volunteers', label: 'Volunteers', icon: HeartHandshake, badge: stats.pendingVolunteers },
           { id: 'users', label: 'Users', icon: Users },
+          { id: 'verifications', label: 'Verification', icon: BadgeCheck },
         ],
       },
       { title: 'System', items: [{ id: 'activity', label: 'Activity log', icon: History }] },

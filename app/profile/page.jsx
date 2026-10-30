@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import EmailPanel from '../../components/profile/EmailPanel';
 import toast from 'react-hot-toast';
-import { Bell, CheckCircle2, Circle, Droplet, HeartHandshake, KeyRound, Lock, Save, UserRound } from 'lucide-react';
+import { Bell, CheckCircle2, Circle, Droplet, HeartHandshake, KeyRound, Lock, Save, UserRound, HeartPulse } from 'lucide-react';
 import { API_BASE, apiFetch, saveToken } from '../../lib/api';
 import PrivacyPanel from '../../components/profile/PrivacyPanel';
 import { bdLocations } from '../../lib/bdLocations';
@@ -14,6 +14,7 @@ import { useAuth } from '../../components/AuthProvider';
 import ImageUpload from '../../components/ImageUpload';
 import { GroupPicker } from '../../components/blood/ui';
 import { PasswordField, SectionCard, SubmitButton, fieldClass, glass, labelClass } from '../../components/ui/kit';
+import VerifyPanel from '../../components/profile/VerifyPanel';
 
 const divisions = Object.keys(bdLocations);
 const byName = (a, b) => a.localeCompare(b);
@@ -177,6 +178,9 @@ export default function ProfilePage() {
             <h1 className="text-3xl font-semibold text-slate-900">{user.name}</h1>
             <p className="mt-1 text-sm text-slate-600">{[user.email, user.phone].filter(Boolean).join(' · ')}</p>
             <div className="mt-3 flex flex-wrap gap-2">
+                {user.verified && (
+                <span className="flex items-center gap-1 rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">Verified</span>
+              )}
               {user.roles.map((r) => (
                 <span key={r} className="rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-slate-700">{roleLabel[r] || r}</span>
               ))}
@@ -213,11 +217,12 @@ export default function ProfilePage() {
         </div>
       </motion.section>
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-3">
+      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
           [Droplet, user.donor?.isDonor ? 'Donor profile' : 'Become a donor', '/blood/donor', 'bg-rose-100 text-rose-600'],
           [HeartHandshake, 'Campaigns and donations', '/donate/mine', 'bg-emerald-100 text-emerald-600'],
           [Bell, 'Alert settings', '/notifications', 'bg-violet-100 text-violet-600'],
+          [HeartPulse, 'Medical ID and QR', '/profile/medical-id', 'bg-rose-100 text-rose-600'],
         ].map(([Icon, text, href, tone], i) => (
           <motion.div key={href} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 + i * 0.07 }}>
             <Link href={href} className={`${glass} flex items-center gap-3 p-4 transition-all hover:-translate-y-1 hover:shadow-xl`}>
@@ -257,7 +262,7 @@ export default function ProfilePage() {
         </SectionCard>
 
         <SectionCard step="3" title="Where you live">
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <select value={form.division} onChange={(e) => setForm({ ...form, division: e.target.value, district: '', area: '' })} className={fieldClass}>
               <option value="">Division</option>
               {divisions.map((d) => <option key={d}>{d}</option>)}
@@ -304,6 +309,7 @@ export default function ProfilePage() {
         </SectionCard>
       </form>
         <EmailPanel />
+        <VerifyPanel />
       <PrivacyPanel />
     </main>
   );

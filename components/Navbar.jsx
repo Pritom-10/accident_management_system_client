@@ -8,13 +8,14 @@ import toast from 'react-hot-toast';
 import {
   Building2, ChevronDown, ClipboardList, Droplet, HeartHandshake, LayoutDashboard, LogIn, LogOut,
   MapPinned, Menu, PenLine, Phone, Receipt, ShieldCheck, Siren, UserPlus, UserRound, UserSearch, X,
-  BellRing, HeartPulse, Bell,
+  BellRing, HeartPulse, Bell, Scale
 
 } from 'lucide-react';
 import Logo from './Logo';
 import { detachDevice } from '../lib/push';
 import { useAuth } from './AuthProvider';
 import { imageSrc } from '../lib/imageUrl';
+import VerifiedMark from './ui/VerifiedMark';
 
 const primary = [
   { label: 'Home', href: '/' },
@@ -47,10 +48,11 @@ const quickLinks = [
   { title: 'Report an accident', desc: 'No account needed', href: '/report', icon: PenLine, tone: 'bg-amber-100 text-amber-600' },
   { title: 'Accident map', desc: 'Blackspots and heatmap', href: '/map', icon: MapPinned, tone: 'bg-violet-100 text-violet-600' },
   { title: 'Find blood donors', desc: 'By group and area', href: '/blood/donors', icon: Droplet, tone: 'bg-rose-100 text-rose-600' },
-    { title: 'Alerts on your phone', desc: 'SOS, blood and breaking news', href: '/notifications', icon: Bell, tone: 'bg-violet-100 text-violet-600' },
+  { title: 'Alerts on your phone', desc: 'SOS, blood and breaking news', href: '/notifications', icon: Bell, tone: 'bg-violet-100 text-violet-600' },
+  { title: 'Legal help and counseling', desc: 'What to do after an accident', href: '/help', icon: Scale, tone: 'bg-indigo-100 text-indigo-600' },
 ];
 
-const exploreRoots = ['/hospitals', '/unidentified-patients', '/map', '/report', '/sos', '/first-aid'];
+const exploreRoots = ['/hospitals', '/unidentified-patients', '/map', '/report', '/sos', '/first-aid', '/help'];
 
 function Avatar({ user, size = 36 }) {
   const initials = user.name
@@ -122,6 +124,7 @@ export default function Navbar() {
     ? [
         { label: 'My profile', href: '/profile', icon: UserRound },
         { label: 'Alert settings', href: '/notifications', icon: Bell },
+        { label: 'Medical ID', href: '/profile/medical-id', icon: HeartPulse },
         { label: 'Blood activity', href: '/blood/mine', icon: ClipboardList },
         { label: user.donor?.isDonor ? 'Donor profile' : 'Become a donor', href: '/blood/donor', icon: Droplet },
         { label: 'Campaigns and donations', href: '/donate/mine', icon: Receipt },
@@ -292,7 +295,10 @@ export default function Navbar() {
                       <div className="flex items-center gap-3 px-3 py-3">
                         <Avatar user={user} size={40} />
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-slate-900">{user.name}</p>
+                         <p className="flex items-center gap-1 truncate text-sm font-semibold text-slate-900">
+                            <span className="truncate">{user.name}</span>
+                            {user.verified && <VerifiedMark size={15} />}
+                          </p>
                           <p className="truncate text-xs text-slate-500">{user.email || user.phone}</p>
                         </div>
                       </div>
@@ -419,7 +425,10 @@ export default function Navbar() {
                   <div className="flex items-center gap-3 rounded-2xl bg-slate-50 p-3">
                     <Avatar user={user} size={40} />
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-slate-900">{user.name}</p>
+                     <p className="flex items-center gap-1 truncate text-sm font-semibold text-slate-900">
+                            <span className="truncate">{user.name}</span>
+                            {user.verified && <VerifiedMark size={15} />}
+                          </p>
                       <p className="truncate text-xs text-slate-500">{user.email || user.phone}</p>
                     </div>
                   </div>
