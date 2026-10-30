@@ -22,6 +22,7 @@ const columns = [
       ['Verified cases', '/accidents'],
       ['Accident map', '/map'],
       ['Alerts on your phone', '/notifications'],
+      ['Points and badges', '/rewards'],
     ],
   },
   {

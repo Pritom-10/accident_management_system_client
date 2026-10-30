@@ -16,6 +16,7 @@ import { API_BASE, apiFetch } from '../../../../lib/api';
 import { canDonateTo, checkEligibility, displayPhone, telLink, waLink } from '../../../../lib/blood';
 import { formatDateTime } from '../../../../lib/newsOptions';
 import NearbyStock from '../../../../components/blood/NearbyStock';
+import { Stars, StarPicker } from '../../../../components/ui/Stars';
 
 const cardClass = 'rounded-2xl border border-white/50 bg-white/50 p-5 shadow-md shadow-slate-900/5 backdrop-blur-xl';
 
@@ -127,6 +128,17 @@ export default function BloodRequestDetailPage() {
   };
   const confirmDonated = (donorId) =>
     act(`d-${donorId}`, () => apiFetch(`${API_BASE}/blood/requests/${id}/responses/${donorId}/donated`, { method: 'PATCH' }), 'Donation confirmed. Thank you!');
+    const rate = (donorId, stars) =>
+    act(
+      `r-${donorId}`,
+      () =>
+        apiFetch(`${API_BASE}/blood/requests/${id}/responses/${donorId}/rate`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ stars }),
+        }),
+      'Thank you for rating'
+    );
   const cancel = () => {
     if (!window.confirm('Cancel this request? Donors will no longer see it.')) return;
     act('cancel', () => apiFetch(`${API_BASE}/blood/requests/${id}/cancel`, {
@@ -353,6 +365,15 @@ export default function BloodRequestDetailPage() {
                     <div>
                       <p className="text-sm font-medium text-slate-900">{x.donorName}</p>
                       <p className="text-xs text-slate-600">{x.status === 'donated' ? 'Donated' : 'Offered to donate'}</p>
+                                            {x.status === 'donated' &&
+                        (x.stars ? (
+                          <Stars value={x.stars} />
+                        ) : r.isOwner ? (
+                          <div className="mt-1">
+                            <p className="text-[11px] text-slate-500">Rate this donor</p>
+                            <StarPicker onPick={(n) => rate(x.donor, n)} disabled={busy === `r-${x.donor}`} />
+                          </div>
+                        ) : null)}
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2">

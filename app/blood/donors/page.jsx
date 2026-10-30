@@ -9,6 +9,7 @@ import LocationFields, { toLocationQuery } from '../../../components/LocationFie
 import { API_BASE, apiFetch } from '../../../lib/api';
 import { dateText, displayPhone, telLink, waLink } from '../../../lib/blood';
 import { imageSrc } from '../../../lib/imageUrl';
+import { Stars } from '../../../components/ui/Stars';
 
 const PAGE_SIZE = 12;
 const emptyLoc = { division: '', district: '', areaKey: '' };
@@ -45,6 +46,11 @@ function DonorCard({ donor, group, index }) {
         {donor.lastDonationDate ? `Last donated ${dateText(donor.lastDonationDate)}` : 'Has not donated yet'}
         {donor.donationCount > 0 ? ` · ${donor.donationCount} ${donor.donationCount === 1 ? 'donation' : 'donations'}` : ''}
       </p>
+            {donor.rating && (
+        <p className="flex items-center gap-1.5 text-xs text-slate-600">
+          <Stars value={donor.rating.avg} /> {donor.rating.avg} ({donor.rating.count})
+        </p>
+      )}
 
       {donor.phone && (
         <div className="mt-auto flex flex-wrap gap-2">

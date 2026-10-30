@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import {
   Building2, ChevronDown, ClipboardList, Droplet, HeartHandshake, LayoutDashboard, LogIn, LogOut,
   MapPinned, Menu, PenLine, Phone, Receipt, ShieldCheck, Siren, UserPlus, UserRound, UserSearch, X,
-  BellRing, HeartPulse, Bell, Scale
+  BellRing, HeartPulse, Bell, Scale, Award
 
 } from 'lucide-react';
 import Logo from './Logo';
@@ -16,6 +16,7 @@ import { detachDevice } from '../lib/push';
 import { useAuth } from './AuthProvider';
 import { imageSrc } from '../lib/imageUrl';
 import VerifiedMark from './ui/VerifiedMark';
+
 
 const primary = [
   { label: 'Home', href: '/' },
@@ -124,6 +125,7 @@ export default function Navbar() {
     ? [
         { label: 'My profile', href: '/profile', icon: UserRound },
         { label: 'Alert settings', href: '/notifications', icon: Bell },
+        { label: 'Points and badges', href: '/rewards', icon: Award },
         { label: 'Medical ID', href: '/profile/medical-id', icon: HeartPulse },
         { label: 'Blood activity', href: '/blood/mine', icon: ClipboardList },
         { label: user.donor?.isDonor ? 'Donor profile' : 'Become a donor', href: '/blood/donor', icon: Droplet },
