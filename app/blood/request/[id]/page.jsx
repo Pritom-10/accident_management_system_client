@@ -15,6 +15,7 @@ import { GroupBadge, Skeleton, StatusBadge, TimeLeft } from '../../../../compone
 import { API_BASE, apiFetch } from '../../../../lib/api';
 import { canDonateTo, checkEligibility, displayPhone, telLink, waLink } from '../../../../lib/blood';
 import { formatDateTime } from '../../../../lib/newsOptions';
+import NearbyStock from '../../../../components/blood/NearbyStock';
 
 const cardClass = 'rounded-2xl border border-white/50 bg-white/50 p-5 shadow-md shadow-slate-900/5 backdrop-blur-xl';
 
@@ -285,6 +286,7 @@ export default function BloodRequestDetailPage() {
           </div>
         )}
       </motion.section>
+            {open && <NearbyStock group={r.bloodGroup} district={r.location?.district} />}
 
       {open && !r.isOwner && (
         <motion.section {...rise(4)} className={`${cardClass} mt-5`}>

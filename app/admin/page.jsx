@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Coins, Droplet, FileWarning,MessageSquare,LayoutDashboard, HeartHandshake, History, Lock, Newspaper, ShieldCheck, Siren, UserSearch, Users, Scale } from 'lucide-react';
+import { Coins, Droplet, FileWarning,MessageSquare,LayoutDashboard, HeartHandshake, History, Lock, Newspaper, ShieldCheck, Siren, UserSearch, Users, Scale,Building2 } from 'lucide-react';
 import { useAuth } from '../../components/AuthProvider';
 import { useAdminData } from '../../lib/useAdminData';
 import SosTab from '../../components/admin/SosTab';
@@ -18,6 +18,7 @@ import ActivityTab from '../../components/admin/ActivityTab';
 import OverviewTab from '../../components/admin/OverviewTab';
 import CommentsTab from '../../components/admin/CommentsTab';
 import DisputesTab from '../../components/admin/DisputesTab';
+import HospitalsTab from '../../components/admin/HospitalsTab';
 
 const views = {
   overview: OverviewTab,
@@ -32,6 +33,7 @@ const views = {
   activity: ActivityTab,
   comments: CommentsTab,
   disputes: DisputesTab,
+  hospitals: HospitalsTab,
 };
 
 function Notice({ icon, title, text, children }) {
@@ -105,6 +107,7 @@ function AdminPanel() {
           { id: 'news', label: 'News', icon: Newspaper, badge: stats.pendingNews },
           { id: 'blood', label: 'Blood', icon: Droplet },
           { id: 'campaigns', label: 'Campaigns', icon: Coins, badge: (stats.pendingCampaigns || 0) + (stats.flaggedCampaigns || 0) },
+          { id: 'hospitals', label: 'Hospitals', icon: Building2 },
           { id: 'disputes', label: 'Disputes', icon: Scale, badge: stats.openDisputes },
           { id: 'comments', label: 'Comments', icon: MessageSquare, badge: stats.reportedComments },
         ],

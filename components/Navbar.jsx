@@ -115,6 +115,7 @@ export default function Navbar() {
   const isAdmin = roles.includes('admin');
   const canVolunteer = isAdmin || roles.includes('volunteer');
   const canWrite = isAdmin || roles.includes('journalist');
+  const isStaff = Boolean(user && (roles.includes('hospital') || roles.includes('bloodbank')));
   const firstName = user ? user.name.split(' ')[0] : '';
 
   const accountItems = user
@@ -127,6 +128,7 @@ export default function Navbar() {
         ...(canVolunteer ? [{ label: 'Volunteer dashboard', href: '/volunteer/dashboard', icon: LayoutDashboard }] : []),
         ...(canVolunteer || user.donor?.isDonor ? [{ label: 'Nearby SOS alerts', href: '/sos/nearby', icon: BellRing }] : []),
         ...(canWrite ? [{ label: 'My news posts', href: '/news/mine', icon: PenLine }] : []),
+        ...(isStaff || isAdmin ? [{ label: 'Hospital live numbers', href: '/hospital/manage', icon: Building2 }] : []),
         ...(isAdmin ? [{ label: 'Admin panel', href: '/admin', icon: ShieldCheck }] : []),
       ]
     : [];
